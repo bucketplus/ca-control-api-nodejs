@@ -30,7 +30,7 @@ async function readInputFile() {
     return fileResponse.data;
   } else {
     console.log('Read local file', manifest.input.test);
-    return fs.readFileSync(manifest.input.test, 'utf-8');
+    return fs.readFileSync(manifest.input.test);
   }
 }
 
@@ -50,7 +50,7 @@ async function writeOutputFile(content, mimetype) {
     return fileResponse.data;
   } else {
     console.log('Write local file', manifest.output.test);
-    fs.writeFileSync(manifest.output.test, content, 'utf-8');
+    fs.writeFileSync(manifest.output.test, content);
   }
 }
 
