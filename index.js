@@ -5,28 +5,63 @@ import AWS from 'aws-sdk';
 const BP_ENDPOINT = process.env.BP_ENDPOINT;
 const isProd = (process.env.BP_ENV == 'production');
 
-async function readInputFile() {
+function getInputS3() {
   const s3 = new AWS.S3({
     accessKeyId: process.env.BP_INPUT_ACCESS_KEY,
     secretAccessKey: process.env.BP_INPUT_ACCESS_SECRET,
     endpoint: process.env.BP_INPUT_ENDPOINT,
   });
-  const data = await s3.getObject({
-    Bucket: process.env.BP_INPUT_BUCKET,
-    Key: process.env.BP_INPUT_FILE,
-  }).promise();
-  return data.Body;
+  return s3;
 }
 
-async function writeOutputFile(content, contenttype) {
-  const s3 = new AWS.S3({
+function getOutputS3() {
+  return new AWS.S3({
     accessKeyId: process.env.BP_OUTPUT_ACCESS_KEY,
     secretAccessKey: process.env.BP_OUTPUT_ACCESS_SECRET,
     endpoint: process.env.BP_OUTPUT_ENDPOINT,
   });
+}
+
+async function readInputFile() {
+  const s3 = getInputS3();
+  const data = await s3.getObject({
+    Bucket: process.env.BP_INPUT_BUCKET,
+    Key: (process.env.BP_INPUT_FILE || process.env.BP_INPUT_PATH),
+  }).promise();
+  return data.Body;
+}
+
+async function getSignedInputFileUrl() {
+  const s3 = getInputS3();
+  return s3.getSignedUrl('getObject', {
+    Bucket: process.env.BP_INPUT_BUCKET,
+    Key: (process.env.BP_INPUT_FILE || process.env.BP_INPUT_PATH),
+  });
+}
+async function getSignedOutputFileUrl() {
+  const s3 = getOutputS3();
+  return s3.getSignedUrl('putObject', {
+    Bucket: process.env.BP_OUTPUT_BUCKET,
+    Key: (process.env.BP_OUTPUT_FILE || process.env.BP_OUTPUT_PATH),
+  });
+}
+
+async function listInputFolderObjects() {
+  const s3 = getInputS3();
+  const resp = await s3.listObjectsV2({
+    Bucket: process.env.BP_INPUT_BUCKET,
+    Prefix: (process.env.BP_INPUT_FILE || process.env.BP_INPUT_PATH),
+    MaxKeys: 1000,
+  }).promise();
+  console.log(resp);
+  return resp.Contents;
+}
+
+async function writeOutputFile(content, contenttype) {
+  const s3 = getOutputS3();
   return await s3.putObject({
     Bucket: process.env.BP_OUTPUT_BUCKET,
-    Key: process.env.BP_OUTPUT_FILE,
+    Key: (process.env.BP_OUTPUT_FILE || process.env.BP_OUTPUT_PATH),
     Body: content,
     ContentType: contenttype,
   }).promise();
@@ -85,4 +120,7 @@ export default {
   reportStarted,
   reportFailed,
   reportCompleted,
+  getSignedInputFileUrl,
+  getSignedOutputFileUrl,
+  listInputFolderObjects,
 }
