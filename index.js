@@ -89,7 +89,7 @@ async function uploadOutputFileToKey(localPath, contenttype, key) {
 }
 
 async function downloadInputFile(localPath) {
-  const s3 = getOutputS3();
+  const s3 = getInputS3();
 
   const { Body } = await s3.getObject({
     Bucket: process.env.BP_OUTPUT_BUCKET,
