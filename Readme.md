@@ -129,6 +129,8 @@ The following methods are currently available via the control API:
 
 * `bp.uploadOutputFile(localPath, contenttype)` - uploads a specified local file to the cloud output file.
 
+* `bp.uploadOutputFileForKey(localPath, contenttype)` - uploads a specified local file to the cloud output file for specified key path.
+
 #### For output.type = `folder` containers
 
 * `bp.uploadOutputFiles(localFolderPath)` - uploads all the files from a specified local folder to the cloud output folder.

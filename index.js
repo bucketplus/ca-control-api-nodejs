@@ -78,6 +78,16 @@ async function uploadOutputFile(localPath, contenttype) {
   }).promise();
 }
 
+async function uploadOutputFileForKey(localPath, contenttype, key) {
+  const s3 = getOutputS3();
+  return await s3.putObject({
+    Bucket: process.env.BP_OUTPUT_BUCKET,
+    Key: key,
+    Body: fs.readFileSync(localPath),
+    ContentType: contenttype,
+  }).promise();
+}
+
 async function downloadInputFile(localPath) {
   const s3 = getOutputS3();
 
@@ -86,7 +96,7 @@ async function downloadInputFile(localPath) {
     Key: (process.env.BP_OUTPUT_FILE || process.env.BP_OUTPUT_PATH)
   }).promise()
   return fs.writeFileSync(localPath, Body.toString());
-  
+
 }
 
 async function writeObjectFileToKey(content, contenttype, key) {
@@ -167,5 +177,6 @@ export default {
   writeObjectFileToKey,
   getSignedOutputFileForKey,
   uploadOutputFile,
-  downloadInputFile
+  downloadInputFile,
+  uploadOutputFileForKey
 }
