@@ -109,7 +109,7 @@ The following methods are currently available via the control API:
 
 * `bp.getSignedInputFileUrl()` - return signed url for a file to read.
 
-* `bp.downloadInputFile(localPath)` - downloads the cloud input file to a local relative path. Recommended for larger files, e.g. video files. *Coming Soon*
+* `bp.downloadInputFile(localPath)` - downloads the cloud input file to a local relative path. Recommended for larger files, e.g. video files.
 
 #### For input.type = `folder` containers
 * `bp.downloadInputFiles(localFolderPath)` - downloads all cloud input files to a local folder. *Coming Soon*
@@ -127,7 +127,7 @@ The following methods are currently available via the control API:
 
 * `bp.getSignedOutputFileForKey(contentType, key)` - return signed url for a file to write cloud output file for specified key path.
 
-* `bp.uploadOutputFile(localPath)` - uploads a specified local file to the cloud output file. *Coming Soon*
+* `bp.uploadOutputFile(localPath)` - uploads a specified local file to the cloud output file.
 
 #### For output.type = `folder` containers
 
