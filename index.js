@@ -68,6 +68,25 @@ async function writeOutputFile(content, contenttype) {
   }).promise();
 }
 
+async function writeObjectFileToKey(content, contenttype, key) {
+  const s3 = getOutputS3();
+  return await s3.putObject({
+    Bucket: process.env.BP_OUTPUT_BUCKET,
+    Key: key,
+    Body: content,
+    ContentType: contenttype,
+  }).promise();
+}
+
+async function getSignedOutputFileForKey(contentType, key) {
+  const s3 = getOutputS3();
+  return s3.getSignedUrl('putObject', {
+    Bucket: process.env.BP_OUTPUT_BUCKET,
+    Key: key,
+    ContentType: contentType
+  });
+}
+
 async function charge(quantity, unit) {
   if (isProd) {
     await axios.post(`${BP_ENDPOINT}/charge`, {
@@ -124,4 +143,6 @@ export default {
   getSignedInputFileUrl,
   getSignedOutputFileUrl,
   listInputFolderObjects,
+  writeObjectFileToKey,
+  getSignedOutputFileForKey
 }

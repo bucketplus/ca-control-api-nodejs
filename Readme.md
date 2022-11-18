@@ -107,6 +107,8 @@ The following methods are currently available via the control API:
 #### For input.type = `file` containers
 * `bp.readInputFile()` - reads the cloud input file into buffer. Recommended for small files, e.g. text and image files.
 
+* `bp.getSignedInputFileUrl()` - return signed url for a file to read.
+
 * `bp.downloadInputFile(localPath)` - downloads the cloud input file to a local relative path. Recommended for larger files, e.g. video files. *Coming Soon*
 
 #### For input.type = `folder` containers
@@ -118,6 +120,12 @@ The following methods are currently available via the control API:
 
 #### For output.type = `file` containers
 * `bp.writeOutputFile(content, mimetype)` - writes content to the cloud output file. Recommended for small files, e.g. text and image files.
+
+* `bp.writeObjectFileToKey(content, mimetype, key)` -writes content to the cloud output file for specified key path. Recommended for small files, e.g. text and image files.
+
+* `bp.getSignedOutputFileUrl(contentType)` - return signed url for a file to write cloud output file.
+
+* `bp.getSignedOutputFileForKey(contentType, key)` - return signed url for a file to write cloud output file for specified key path.
 
 * `bp.uploadOutputFile(localPath)` - uploads a specified local file to the cloud output file. *Coming Soon*
 
