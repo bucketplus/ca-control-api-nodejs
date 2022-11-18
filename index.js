@@ -38,11 +38,12 @@ async function getSignedInputFileUrl() {
     Key: (process.env.BP_INPUT_FILE || process.env.BP_INPUT_PATH),
   });
 }
-async function getSignedOutputFileUrl() {
+async function getSignedOutputFileUrl(contentType) {
   const s3 = getOutputS3();
   return s3.getSignedUrl('putObject', {
     Bucket: process.env.BP_OUTPUT_BUCKET,
     Key: (process.env.BP_OUTPUT_FILE || process.env.BP_OUTPUT_PATH),
+    ContentType: contentType
   });
 }
 
