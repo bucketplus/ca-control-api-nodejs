@@ -78,7 +78,7 @@ async function uploadOutputFile(localPath, contenttype) {
   }).promise();
 }
 
-async function uploadOutputFileForKey(localPath, contenttype, key) {
+async function uploadOutputFileToKey(localPath, contenttype, key) {
   const s3 = getOutputS3();
   return await s3.putObject({
     Bucket: process.env.BP_OUTPUT_BUCKET,
@@ -178,5 +178,5 @@ export default {
   getSignedOutputFileForKey,
   uploadOutputFile,
   downloadInputFile,
-  uploadOutputFileForKey
+  uploadOutputFileToKey
 }
