@@ -129,7 +129,7 @@ The following methods are currently available via the control API:
 
 * `bp.uploadOutputFile(localPath, contenttype)` - uploads a specified local file to the cloud output file.
 
-* `bp.uploadOutputFileToKey(localPath, contenttype, key)` - uploads a specified local file to the cloud output file for specified key path.
+* `bp.uploadOutputFileToKey(localPath, contenttype, key)` - uploads a specified local file to the cloud output file for specified key path. This function store file to 'BP_OUTPUT_PATH/BP_JOB_ID/key'
 
 #### For output.type = `folder` containers
 

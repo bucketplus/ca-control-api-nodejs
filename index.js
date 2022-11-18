@@ -80,9 +80,14 @@ async function uploadOutputFile(localPath, contenttype) {
 
 async function uploadOutputFileToKey(localPath, contenttype, key) {
   const s3 = getOutputS3();
+  let outputPath = '';
+  if(process.env.BP_OUTPUT_PATH)
+    outputPath = `${process.env.BP_OUTPUT_PATH}/${process.env.BP_JOB_ID}/key`;
+  else
+  `${process.env.BP_JOB_ID}/key`
   return await s3.putObject({
     Bucket: process.env.BP_OUTPUT_BUCKET,
-    Key: key,
+    Key: `${process.env.BP_OUTPUT_PATH}/${process.env.BP_JOB_ID}/key`,
     Body: fs.readFileSync(localPath),
     ContentType: contenttype,
   }).promise();
