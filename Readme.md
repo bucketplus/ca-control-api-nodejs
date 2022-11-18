@@ -127,7 +127,7 @@ The following methods are currently available via the control API:
 
 * `bp.getSignedOutputFileForKey(contentType, key)` - return signed url for a file to write cloud output file for specified key path.
 
-* `bp.uploadOutputFile(localPath)` - uploads a specified local file to the cloud output file.
+* `bp.uploadOutputFile(localPath, contenttype)` - uploads a specified local file to the cloud output file.
 
 #### For output.type = `folder` containers
 
