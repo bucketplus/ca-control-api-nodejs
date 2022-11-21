@@ -92,8 +92,8 @@ async function downloadInputFile(localPath) {
   const s3 = getInputS3();
 
   const { Body } = await s3.getObject({
-    Bucket: process.env.BP_OUTPUT_BUCKET,
-    Key: (process.env.BP_OUTPUT_FILE || process.env.BP_OUTPUT_PATH)
+    Bucket: process.env.BP_INPUT_BUCKET,
+    Key: (process.env.BP_INPUT_FILE || process.env.BP_INPUT_PATH),
   }).promise()
   return fs.writeFileSync(localPath, Body.toString());
 
