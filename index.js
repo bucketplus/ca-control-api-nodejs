@@ -151,6 +151,14 @@ async function setStatus(status, msg) {
   }
 }
 
+async function requestInputObject() {
+  const s3 = getInputS3();
+  return await s3.getObject({
+    Bucket: process.env.BP_INPUT_BUCKET,
+    Key: (process.env.BP_INPUT_FILE || process.env.BP_INPUT_PATH),
+  }).promise();
+}
+
 async function reportStarted() {
   await setStatus('STARTED');
 }
@@ -178,5 +186,6 @@ export default {
   getSignedOutputFileForKey,
   uploadOutputFile,
   downloadInputFile,
-  uploadOutputFileToKey
+  uploadOutputFileToKey,
+  requestInputObject
 }
