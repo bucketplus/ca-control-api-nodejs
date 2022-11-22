@@ -78,11 +78,26 @@ async function uploadOutputFile(localPath, contenttype) {
   }).promise();
 }
 
-async function uploadOutputFileToKey(localPath, contenttype, key) {
+async function uploadOutputFileWithExtension(localPath, contenttype, ext) {
   const s3 = getOutputS3();
   return await s3.putObject({
     Bucket: process.env.BP_OUTPUT_BUCKET,
-    Key: (process.env.BP_OUTPUT_PATH ? `${process.env.BP_OUTPUT_PATH}/${key}` : `${key}`),
+    Key: (`${process.env.BP_OUTPUT_FILE}.${ext}` || `${process.env.BP_OUTPUT_PATH}.${ext}`),
+    Body: fs.readFileSync(localPath),
+    ContentType: contenttype,
+  }).promise();
+}
+
+async function uploadOutputFileToKey(localPath, contenttype, key) {
+  const s3 = getOutputS3();
+  let outputPath = key;
+  if(process.env.BP_OUTPUT_PATH)
+    outputPath = `${process.env.BP_OUTPUT_PATH}/${key}`;
+  if(process.env.BP_OUTPUT_FILE)
+    outputPath = `${process.env.BP_OUTPUT_FILE }/${key}`
+  return await s3.putObject({
+    Bucket: process.env.BP_OUTPUT_BUCKET,
+    Key: outputPath,
     Body: fs.readFileSync(localPath),
     ContentType: contenttype,
   }).promise();
@@ -90,7 +105,6 @@ async function uploadOutputFileToKey(localPath, contenttype, key) {
 
 async function downloadInputFile(localPath) {
   const s3 = getInputS3();
-
   const { Body } = await s3.getObject({
     Bucket: process.env.BP_INPUT_BUCKET,
     Key: (process.env.BP_INPUT_FILE || process.env.BP_INPUT_PATH),
@@ -101,9 +115,14 @@ async function downloadInputFile(localPath) {
 
 async function writeObjectFileToKey(content, contenttype, key) {
   const s3 = getOutputS3();
+  let outputPath = key;
+  if(process.env.BP_OUTPUT_PATH)
+    outputPath = `${process.env.BP_OUTPUT_PATH}/${key}`;
+  if(process.env.BP_OUTPUT_FILE)
+    outputPath = `${process.env.BP_OUTPUT_FILE }/${key}`
   return await s3.putObject({
     Bucket: process.env.BP_OUTPUT_BUCKET,
-    Key: (`${process.env.BP_OUTPUT_PATH}/${key}` || `${key}`),
+    Key: outputPath,
     Body: content,
     ContentType: contenttype,
   }).promise();
@@ -111,6 +130,7 @@ async function writeObjectFileToKey(content, contenttype, key) {
 
 async function getSignedOutputFileForKey(contentType, key) {
   const s3 = getOutputS3();
+  
   return s3.getSignedUrl('putObject', {
     Bucket: process.env.BP_OUTPUT_BUCKET,
     Key: (process.env.BP_OUTPUT_PATH ? `${process.env.BP_OUTPUT_PATH}/${key}` : `${key}`),
@@ -187,5 +207,6 @@ export default {
   uploadOutputFile,
   downloadInputFile,
   uploadOutputFileToKey,
-  requestInputObject
+  requestInputObject,
+  uploadOutputFileWithExtension
 }
