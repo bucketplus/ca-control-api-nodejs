@@ -94,7 +94,8 @@ async function uploadOutputFileToKey(localPath, contenttype, key) {
   if(process.env.BP_OUTPUT_PATH)
     outputPath = `${process.env.BP_OUTPUT_PATH}/${key}`;
   if(process.env.BP_OUTPUT_FILE)
-    outputPath = `${process.env.BP_OUTPUT_FILE }/${key}`
+    outputPath = `${process.env.BP_OUTPUT_FILE}/${key}`;
+  bp.log(outputPath)
   return await s3.putObject({
     Bucket: process.env.BP_OUTPUT_BUCKET,
     Key: outputPath,
