@@ -68,30 +68,10 @@ To install the Control API in a node.js container, run:
 ## Environment Variables
 The API expects the following .env variables to be set:
 
-### Bucket+ Environment Variables
-
-#### For services with input objects:
-* `BP_INPUT_PROVIDER`, e.g. `aws`
-* `BP_INPUT_BUCKET`, e.g. `bucket-plus-demo`
-* `BP_INPUT_ENDPOINT`, e.g. `s3.us-east-1.amazonaws.com`
-* `BP_INPUT_ACCESS_KEY`
-* `BP_INPUT_ACCESS_SECRET`
-* `BP_INPUT_FILE`, e.g. `myinput.txt` (for single-item objects only)
-* `BP_INPUT_FOLDER` e.g. `myfolder/` (for folders of objects)
-
-#### For services with output objects
-* `BP_OUTPUT_PROVIDER`, e.g. `aws`
-* `BP_OUTPUT_BUCKET`, e.g. `bucket-plus-demo`
-* `BP_OUTPUT_ENDPOINT`, e.g. `s3.us-east-1.amazonaws.com`
-* `BP_OUTPUT_ACCESS_KEY`
-* `BP_OUTPUT_ACCESS_SECRET`
-* `BP_OUTPUT_FILE`, e.g. `myinput.txt` (for single-item objects only)
-* `BP_OUTPUT_FOLDER` e.g. `myfolder/` (for folders of objects)
-
 #### Only needed in production:
-* `BP_ENV` (not needed in development)
-* `BP_ENDPOINT` (not needed in development)
-* `BP_JOB_ID` (not needed in development)
+* `CA_ENV` (not needed in development)
+* `CA_ENDPOINT` (not needed in development)
+* `CA_JOB_ID` (not needed in development)
 
 ### Job Parameter Environment Variables
 * Each Job Parameter defined in the manifest will be validated and sent using the appropriate name, e.g. `JP_OUTPUT_LANGUAGE`.
@@ -105,37 +85,37 @@ The following methods are currently available via the control API:
 ### Reading Inputs
 
 #### For input.type = `file` containers
-* `bp.readInputFile()` - reads the cloud input file into buffer. Recommended for small files, e.g. text and image files.
+* `bp.readInputFile(bucketUrl)` - reads the cloud input file into buffer. Recommended for small files, e.g. text and image files.
 
-* `bp.getSignedInputFileUrl()` - return signed url for a file to read.
+* `bp.getSignedInputFileUrl(bucketUrl)` - return signed url for a file to read.
 
-* `bp.downloadInputFile(localPath)` - downloads the cloud input file to a local relative path. Recommended for larger files, e.g. video files.
+* `bp.downloadInputFile(localPath, bucketUrl)` - downloads the cloud input file to a local relative path. Recommended for larger files, e.g. video files.
 
 #### For input.type = `folder` containers
-* `bp.downloadInputFiles(localFolderPath)` - downloads all cloud input files to a local folder. *Coming Soon*
+* `bp.downloadInputFiles(localFolderPath, bucketUrl)` - downloads all cloud input files to a local folder. *Coming Soon*
 
-* `bp.listInputFiles()` - provides an array of all cloud input files. *Coming Soon*
+* `bp.listInputFiles(bucketUrl)` - provides an array of all cloud input files. *Coming Soon*
 
-* `bp.readInputFile(path)` - reads a specific cloud input file. *Coming Soon*
+* `bp.readInputFile(path, bucketUrl)` - reads a specific cloud input file. *Coming Soon*
 
 #### For output.type = `file` containers
-* `bp.writeOutputFile(content, mimetype)` - writes content to the cloud output file. Recommended for small files, e.g. text and image files.
+* `bp.writeOutputFile(content, mimetype, bucketUrl)` - writes content to the cloud output file. Recommended for small files, e.g. text and image files.
 
-* `bp.writeObjectFileToKey(content, mimetype, key)` -writes content to the cloud output file for specified key path. Recommended for small files, e.g. text and image files.
+* `bp.writeObjectFileToKey(content, mimetype, key, bucketUrl)` -writes content to the cloud output file for specified key path. Recommended for small files, e.g. text and image files.
 
-* `bp.getSignedOutputFileUrl(contentType)` - return signed url for a file to write cloud output file.
+* `bp.getSignedOutputFileUrl(contentType, bucketUrl)` - return signed url for a file to write cloud output file.
 
-* `bp.getSignedOutputFileForKey(contentType, key)` - return signed url for a file to write cloud output file for specified key path.
+* `bp.getSignedOutputFileForKey(contentType, key, bucketUrl)` - return signed url for a file to write cloud output file for specified key path.
 
-* `bp.uploadOutputFile(localPath, contenttype)` - uploads a specified local file to the cloud output file.
+* `bp.uploadOutputFile(localPath, contenttype, bucketUrl)` - uploads a specified local file to the cloud output file.
 
-* `bp.uploadOutputFileToKey(localPath, contenttype, key)` - uploads a specified local file to the cloud output file for specified key path.
+* `bp.uploadOutputFileToKey(localPath, contenttype, key, bucketUrl)` - uploads a specified local file to the cloud output file for specified key path.
 
 #### For output.type = `folder` containers
 
-* `bp.uploadOutputFiles(localFolderPath)` - uploads all the files from a specified local folder to the cloud output folder.
+* `bp.uploadOutputFiles(localFolderPath, bucketUrl)` - uploads all the files from a specified local folder to the cloud output folder.
 
-* `bp.writeOutputFile(content, mimetype, cloudPath)` - writes one file to the cloud output folder. Recommended for small files, e.g. text and image files.
+* `bp.writeOutputFile(content, mimetype, cloudPath, bucketUrl)` - writes one file to the cloud output folder. Recommended for small files, e.g. text and image files.
 
 ### Lifecycle Updates
 
