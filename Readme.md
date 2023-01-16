@@ -61,6 +61,10 @@ The Bucket+ Control API contains convenience methods making it easier for servic
 To install the Control API in a node.js container, run:
  `yarn add @bucketplus/bp-control-api-nodejs`.
 
+## Importing 
+To Import Control api add
+`import bp from '@bucketplus/bp-control-api-nodejs;` To your code
+
 ## Environment Variables
 The API expects the following .env variables to be set:
 
