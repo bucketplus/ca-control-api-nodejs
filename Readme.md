@@ -4,15 +4,11 @@ This Readme contains info to help developers build Bucket+ Standard Container Se
 
 Standard Container Services import, export, modify, or analyze cloud-based objects. Standard Container Services must:
 1. Contain a valid Dockerfile
-2. Accept a "bucket path" input, output, or both.
 3. Contain a valid manifest.json file.
 4. Use the Control API to send progress updates.
 
 # Dockerfile
 Each Standard Container Service must include a Dockerfile that runs one job to completion, then terminates. It should terminate as quickly as possible, and should not start a long-running service (e.g. it should not start a Node.js express server). It should be as light as possible.
-
-# Bucket Path
-Every Standard Container Service must contain either a "bucket path" input, output or both. A "bucket path" is a fully defined reference to an entire bucket, a single folder within a bucket, or a single object within a bucket, together with the credentials needed to read/write to that path. Bucket Paths are defined via Environment Variables (see below).
 
 # Manifest
 Each Standard Container Service must include a `manifest.json` file that includes:
@@ -63,7 +59,7 @@ The Bucket+ Control API contains convenience methods making it easier for servic
 
 ## Installation
 To install the Control API in a node.js container, run:
- `yarn add https://www.github.com/bucketplus/bp-control-api-nodejs`.
+ `yarn add @bucketplus/bp-control-api-nodejs`.
 
 ## Environment Variables
 The API expects the following .env variables to be set:
@@ -74,7 +70,7 @@ The API expects the following .env variables to be set:
 * `CA_JOB_ID` (not needed in development)
 
 ### Job Parameter Environment Variables
-* Each Job Parameter defined in the manifest will be validated and sent using the appropriate name, e.g. `JP_OUTPUT_LANGUAGE`.
+* Each Job Parameter defined in the manifest will be validated and sent using the appropriate name, e.g. `JP_FILE`.
 
 ### Service Secret Environment Variables
 * Each Service Secret defined in the manifest will be validated and sent using the appropriate name, e.g. `SS_GOOGLE_TRANSLATE_API_KEY`.
@@ -82,40 +78,46 @@ The API expects the following .env variables to be set:
 ##  Methods
 The following methods are currently available via the control API:
 
-### Reading Inputs
+### Signed Urls
 
-#### For input.type = `file` containers
-* `bp.readInputFile(bucketUrl)` - reads the cloud input file into buffer. Recommended for small files, e.g. text and image files.
+#### Presigned URLs are generated for temporary download/upload access objects using a single url.
 
 * `bp.getSignedInputFileUrl(bucketUrl)` - return signed url for a file to read.
 
-* `bp.downloadInputFile(localPath, bucketUrl)` - downloads the cloud input file to a local relative path. Recommended for larger files, e.g. video files.
+* `bp.getSignedOutputFileUrl(bucketUrl)` - return signed url for a file to write.
+
+* `bp.getSignedOutputUrlForKey(bucketUrl, key)` - return signed url for a file to write for specified key path.
+
+### Reading Inputs
+
+#### For input.type = `file` containers
+* `bp.readFileAsStream(bucketUrl)` - reads the cloud input file as a stream. Recommended for small files, e.g. text and image files.
+
+* `bp.readFile(bucketUrl)` - reads the cloud input file as aa object. Recommended for small files, e.g. text and image files.
+
+* `bp.downloadFile(bucketUrl, localPath)` - downloads the cloud input file to a local relative path. Recommended for larger files, e.g. video files.
 
 #### For input.type = `folder` containers
 * `bp.downloadInputFiles(localFolderPath, bucketUrl)` - downloads all cloud input files to a local folder. *Coming Soon*
 
-* `bp.listInputFiles(bucketUrl)` - provides an array of all cloud input files. *Coming Soon*
+* `bp.listInputFolderObjects(bucketUrl)` - provides an array of all cloud input files in a folder.
 
-* `bp.readInputFile(path, bucketUrl)` - reads a specific cloud input file. *Coming Soon*
+
+### Writing Outputs
 
 #### For output.type = `file` containers
-* `bp.writeOutputFile(content, mimetype, bucketUrl)` - writes content to the cloud output file. Recommended for small files, e.g. text and image files.
+* `bp.writeFile(bucketUrl, content)` - writes content to the cloud output file. Recommended for small files, e.g. text and image files.
 
-* `bp.writeObjectFileToKey(content, mimetype, key, bucketUrl)` -writes content to the cloud output file for specified key path. Recommended for small files, e.g. text and image files.
+* `bp.writeFileToKey(bucketUrl, content, key)` -writes content to the cloud output file for specified key path. Recommended for small files, e.g. text and image files.
 
-* `bp.getSignedOutputFileUrl(contentType, bucketUrl)` - return signed url for a file to write cloud output file.
+* `bp.uploadFile(bucketUrl, localPath, contentType)` - uploads a specified local file to the cloud output file.
 
-* `bp.getSignedOutputFileForKey(contentType, key, bucketUrl)` - return signed url for a file to write cloud output file for specified key path.
-
-* `bp.uploadOutputFile(localPath, contenttype, bucketUrl)` - uploads a specified local file to the cloud output file.
-
-* `bp.uploadOutputFileToKey(localPath, contenttype, key, bucketUrl)` - uploads a specified local file to the cloud output file for specified key path.
+* `bp.uploadFileToKey(bucketUrl, localPath, contentType, key)` - uploads a specified local file to the cloud output file for specified key path.
 
 #### For output.type = `folder` containers
 
-* `bp.uploadOutputFiles(localFolderPath, bucketUrl)` - uploads all the files from a specified local folder to the cloud output folder.
+* `bp.uploadOutputFiles(localFolderPath, bucketUrl)` - uploads all the files from a specified local folder to the cloud output folder. *Coming Soon*
 
-* `bp.writeOutputFile(content, mimetype, cloudPath, bucketUrl)` - writes one file to the cloud output folder. Recommended for small files, e.g. text and image files.
 
 ### Lifecycle Updates
 

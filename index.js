@@ -61,7 +61,7 @@ async function getSignedOutputUrlForKey(bucketUrl, key) {
 }
 
 // -----------------------------
-// File Reading fuctions
+// Reading Input file Functions
 // -----------------------------
 
 async function readFileAsStream(bucketUrl) {
@@ -93,17 +93,18 @@ async function downloadFile(bucketUrl, localPath) {
 
 
 // -----------------------------
-// Folder fuctions
+// Reading Folder fuctions
 // -----------------------------
-// TODO: Need fix
 async function listInputFolderObjects(bucketUrl) {
-  // const bucketCreds = getBucketParams(bucketUrl);
-  // const minioClient = getMinioClient(bucketCreds);
-  // var data = []
-  // var stream = await minioClient.listObjects(bucketCreds.bucket,'folder/', true)
-  // stream.on('data', function(obj) { data.push(obj) } )
-  // stream.on("end", function (obj) { console.log(data) })
-  // stream.on('error', function(err) { console.log(err) } )
+  const bucketCreds = getBucketParams(bucketUrl);
+  const minioClient = getMinioClient(bucketCreds);
+  var data = []
+  var stream = await minioClient.listObjects(bucketCreds.bucket,'folder/', true)
+  stream.on('data', function(obj) { data.push(obj) } )
+  await new Promise(resolve => stream.on("end", function (obj) { 
+    resolve(data);
+  }))
+  return data;
 }
 
 // -----------------------------
@@ -159,7 +160,7 @@ async function uploadFileToKey(bucketUrl, localPath, contentType, key) {
 
 
 // -----------------------------
-// Cloud advisor internal functions
+// Lifecycle Updates functions
 // -----------------------------
 
 async function charge(quantity, unit) {
