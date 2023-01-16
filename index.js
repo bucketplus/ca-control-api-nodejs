@@ -50,7 +50,7 @@ async function getSignedOutputFileUrl(bucketUrl) {
   );
 }
 
-async function getSignedOutputUrlForKey(contentType, key, bucketUrl) {
+async function getSignedOutputUrlForKey(bucketUrl, key) {
   const bucketCreds = getBucketParams(bucketUrl);
   const minioClient = getMinioClient(bucketCreds);
   return minioClient.presignedPutObject(
@@ -81,7 +81,7 @@ async function readFile(bucketUrl) {
   });  
 }
 
-async function downloadFile(localPath, bucketUrl) {
+async function downloadFile(bucketUrl, localPath) {
   const bucketCreds = getBucketParams(bucketUrl);
   const minioClient = getMinioClient(bucketCreds);  
   await minioClient.fGetObject(
