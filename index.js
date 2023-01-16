@@ -1,24 +1,15 @@
-import fs from 'fs';
 import axios from 'axios';
-import AWS from 'aws-sdk';
+import * as Minio from 'minio';
 
 const CA_ENDPOINT = process.env.CA_ENDPOINT;
 const isProd = (process.env.CA_ENV == 'production');
 
-function getInputS3({accessKeyId, secretAccessKey, endpoint}) {
-  const s3 = new AWS.S3({
-    accessKeyId,
-    secretAccessKey,
-    endpoint,
-  });
-  return s3;
-}
-
-function getOutputS3({accessKeyId, secretAccessKey, endpoint}) {
-  return new AWS.S3({
-    accessKeyId,
-    secretAccessKey,
-    endpoint,
+function getMinioClient({accessKeyId, secretAccessKey, endpoint}) {
+  return new Minio.Client({
+    endPoint: endpoint,
+    useSSL: true,
+    accessKey: accessKeyId,
+    secretKey: secretAccessKey
   });
 }
 
@@ -35,110 +26,141 @@ function getBucketParams(bucketUrl) {
   }
 }
 
-async function readInputFile(bucketUrl) {
-  const bucketCreds = getBucketParams(bucketUrl);
-  const s3 = getInputS3(bucketCreds);
-  const data = await s3.getObject({
-    Bucket: bucketCreds.bucket,
-    Key: bucketCreds.key,
-  }).promise();
-  return data.Body;
-}
+// -----------------------------
+// Signed Url fuctions
+// -----------------------------
 
 async function getSignedInputFileUrl(bucketUrl) {
   const bucketCreds = getBucketParams(bucketUrl);
-  const s3 = getInputS3(bucketCreds);
-  return s3.getSignedUrl('getObject', {
-    Bucket: bucketCreds.bucket,
-    Key: bucketCreds.key,
-  });
-}
-async function getSignedOutputFileUrl(contentType, bucketUrl) {
-  const bucketCreds = getBucketParams(bucketUrl);
-  const s3 = getOutputS3(bucketCreds);
-  return s3.getSignedUrl('putObject', {
-    Bucket: bucketCreds.bucket,
-    Key: bucketCreds.key,
-    ContentType: contentType
-  });
+  const minioClient = getMinioClient(bucketCreds);
+  return minioClient.presignedGetObject(
+    bucketCreds.bucket,
+    bucketCreds.key,
+    24*60*60
+  )
 }
 
+async function getSignedOutputFileUrl(bucketUrl) {
+  const bucketCreds = getBucketParams(bucketUrl);
+  const minioClient = getMinioClient(bucketCreds);
+  return minioClient.presignedPutObject(
+    bucketCreds.bucket,
+    bucketCreds.key,
+    24*60*60
+  );
+}
+
+async function getSignedOutputUrlForKey(contentType, key, bucketUrl) {
+  const bucketCreds = getBucketParams(bucketUrl);
+  const minioClient = getMinioClient(bucketCreds);
+  return minioClient.presignedPutObject(
+    bucketCreds.bucket,
+    bucketCreds.key ? `${bucketCreds.key}/${key}` : `${key}`,
+    24*60*60
+  );
+}
+
+// -----------------------------
+// File Reading fuctions
+// -----------------------------
+
+async function readFileAsStream(bucketUrl) {
+  const bucketCreds = getBucketParams(bucketUrl);
+  const minioClient = getMinioClient(bucketCreds);
+  return await minioClient.getObject(
+    bucketCreds.bucket,
+    bucketCreds.key
+  );
+}
+
+async function readFile(bucketUrl) {
+  const signedUrl = await getSignedInputFileUrl(bucketUrl);
+  return await axios({
+    method: 'GET',
+    url: signedUrl,
+  });  
+}
+
+async function downloadFile(localPath, bucketUrl) {
+  const bucketCreds = getBucketParams(bucketUrl);
+  const minioClient = getMinioClient(bucketCreds);  
+  await minioClient.fGetObject(
+    bucketCreds.bucket,
+    bucketCreds.key,
+    localPath
+  );
+}
+
+
+// -----------------------------
+// Folder fuctions
+// -----------------------------
+// TODO: Need fix
 async function listInputFolderObjects(bucketUrl) {
-  const bucketCreds = getBucketParams(bucketUrl);
-  const s3 = getInputS3(bucketCreds);
-  const resp = await s3.listObjectsV2({
-    Bucket: bucketCreds.bucket,
-    Prefix: bucketCreds.key,
-    MaxKeys: 1000,
-  }).promise();
-  console.log(resp);
-  return resp.Contents;
+  // const bucketCreds = getBucketParams(bucketUrl);
+  // const minioClient = getMinioClient(bucketCreds);
+  // var data = []
+  // var stream = await minioClient.listObjects(bucketCreds.bucket,'folder/', true)
+  // stream.on('data', function(obj) { data.push(obj) } )
+  // stream.on("end", function (obj) { console.log(data) })
+  // stream.on('error', function(err) { console.log(err) } )
 }
 
-async function writeOutputFile(content, contentType, bucketUrl) {
-  const bucketCreds = getBucketParams(bucketUrl);
-  const s3 = getOutputS3(bucketCreds);
-  return await s3.putObject({
-    Bucket: bucketCreds.bucket,
-    Key: bucketCreds.key,
-    Body: content,
-    ContentType: contentType,
-  }).promise();
-}
+// -----------------------------
+// Writing File Functions
+// -----------------------------
 
-async function uploadOutputFile(localPath, contentType, bucketUrl) {
-  const bucketCreds = getBucketParams(bucketUrl);
-  const s3 = getOutputS3(bucketCreds);
-  return await s3.putObject({
-    Bucket: bucketCreds.bucket,
-    Key: bucketCreds.key,
-    Body: fs.readFileSync(localPath),
-    ContentType: contentType,
-  }).promise();
-}
-
-async function uploadOutputFileToKey(localPath, contentType, key, bucketUrl) {
-  const bucketCreds = getBucketParams(bucketUrl);
-  const s3 = getOutputS3(bucketCreds);
-  return await s3.putObject({
-    Bucket: bucketCreds.bucket,
-    Key: (bucketCreds.key ? `${bucketCreds.key}/${key}` : `${key}`),
-    Body: fs.readFileSync(localPath),
-    ContentType: contentType,
-  }).promise();
-}
-
-async function downloadInputFile(localPath, bucketUrl) {
-  const bucketCreds = getBucketParams(bucketUrl);
-  const s3 = getInputS3(bucketCreds);
-  const { Body } = await s3.getObject({
-    Bucket: bucketCreds.bucket,
-    Key: bucketCreds.key,
-  }).promise()
-  return fs.writeFileSync(localPath, Body.toString());
-
-}
-
-async function writeObjectFileToKey(content, contentType, key, bucketUrl) {
-  const bucketCreds = getBucketParams(bucketUrl);
-  const s3 = getOutputS3(bucketCreds);
-  return await s3.putObject({
-    Bucket: bucketCreds.bucket,
-    Key: (bucketCreds.key ? `${bucketCreds.key}/${key}` : `${key}`),
-    Body: content,
-    ContentType: contentType,
-  }).promise();
-}
-
-async function getSignedOutputFileForKey(contentType, key, bucketUrl) {
-  const bucketCreds = getBucketParams(bucketUrl);
-  const s3 = getOutputS3(bucketCreds);
-  return s3.getSignedUrl('putObject', {
-    Bucket: bucketCreds.bucket,
-    Key: (bucketCreds.key ? `${bucketCreds.key}/${key}` : `${key}`),
-    ContentType: contentType
+async function writeFile(bucketUrl, content) {
+  const signedUrl = await getSignedOutputFileUrl(bucketUrl);  
+  return await axios({
+    method: 'PUT',
+    url: signedUrl,
+    data: content
   });
 }
+
+async function writeFileToKey(bucketUrl, content, key) {
+  const signedUrl = await getSignedOutputFileUrl(`${bucketUrl/key}`);
+  return await axios({
+    method: 'PUT',
+    url: signedUrl,
+    data: content
+  });
+}
+
+
+async function uploadFile(bucketUrl, localPath, contentType) {
+  const bucketCreds = getBucketParams(bucketUrl);
+  const minioClient = getMinioClient(bucketCreds);
+  const metaData = {
+    'Content-Type': contentType
+  }
+  return await minioClient.fPutObject(
+    bucketCreds.bucket,
+    bucketCreds.key,
+    localPath,
+    metaData
+  );
+}
+
+async function uploadFileToKey(bucketUrl, localPath, contentType, key) {
+  const bucketCreds = getBucketParams(bucketUrl);
+  const minioClient = getMinioClient(bucketCreds);
+  const metaData = {
+    'Content-Type': contentType
+  }
+  return await minioClient.fPutObject(
+    bucketCreds.bucket,
+    bucketCreds.key ? `${bucketCreds.key}/${key}` : `${key}`,
+    localPath,
+    metaData
+  );
+}
+
+
+// -----------------------------
+// Cloud advisor internal functions
+// -----------------------------
 
 async function charge(quantity, unit) {
   if (isProd) {
@@ -173,15 +195,6 @@ async function setStatus(status, msg) {
   }
 }
 
-async function requestInputObject(bucketUrl) {
-  const bucketCreds = getBucketParams(bucketUrl);
-  const s3 = getInputS3(bucketCreds);
-  return await s3.getObject({
-    Bucket: bucketCreds.bucket,
-    Key: bucketCreds.key,
-  }).promise();
-}
-
 async function reportStarted() {
   await setStatus('STARTED');
 }
@@ -195,20 +208,25 @@ async function reportFailed(msg) {
 }
 
 export default {
-  readInputFile,
-  writeOutputFile,
+  getSignedInputFileUrl,
+  getSignedOutputFileUrl,
+  getSignedOutputUrlForKey,
+
+  readFileAsStream,
+  readFile,
+  downloadFile,
+
+  listInputFolderObjects,
+
+  writeFile,
+  writeFileToKey,
+
+  uploadFile,
+  uploadFileToKey,
+
   charge,
   log,
   reportStarted,
   reportFailed,
   reportCompleted,
-  getSignedInputFileUrl,
-  getSignedOutputFileUrl,
-  listInputFolderObjects,
-  writeObjectFileToKey,
-  getSignedOutputFileForKey,
-  uploadOutputFile,
-  downloadInputFile,
-  uploadOutputFileToKey,
-  requestInputObject,
 }
