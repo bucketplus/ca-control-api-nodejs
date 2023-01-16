@@ -106,6 +106,9 @@ The following methods are currently available via the control API:
 ### Writing Outputs
 
 #### For output.type = `file` containers
+
+* `bp.writeStreamToFile(bucketUrl, fileStream)` - writes content to the cloud output file from stream/Buffer. The maximum size of a single object is limited to 5TB.
+
 * `bp.writeFile(bucketUrl, content)` - writes content to the cloud output file. Recommended for small files, e.g. text and image files.
 
 * `bp.writeFileToKey(bucketUrl, content, key)` -writes content to the cloud output file for specified key path. Recommended for small files, e.g. text and image files.

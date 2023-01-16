@@ -129,6 +129,15 @@ async function writeFileToKey(bucketUrl, content, key) {
   });
 }
 
+async function writeStreamToFile(bucketUrl, fileStream) {
+  const bucketCreds = getBucketParams(bucketUrl);
+  const minioClient = getMinioClient(bucketCreds);  
+  minioClient.putObject(
+    bucketCreds.bucket,
+    bucketCreds.key,
+    fileStream
+  );
+}
 
 async function uploadFile(bucketUrl, localPath, contentType) {
   const bucketCreds = getBucketParams(bucketUrl);
@@ -221,6 +230,7 @@ export default {
 
   writeFile,
   writeFileToKey,
+  writeStreamToFile,
 
   uploadFile,
   uploadFileToKey,
