@@ -54,15 +54,15 @@ Each Standard Container Service must include a `manifest.json` file that include
   * `spot` - whether the container can run in a spot instance (strongly recommended for services which can safely re-run if terminated early).
 
 # The Control API
-The Bucket+ Control API contains convenience methods making it easier for service developers to. This repo contains code for Node.js based containers.
+The Efficient Actions Control API contains convenience methods making it easier for service developers to. This repo contains code for Node.js based containers.
 
 ## Installation
 To install the Control API in a node.js container, run:
- `yarn add @bucketplus/bp-control-api-nodejs`.
+ `yarn add @bucketplus/ca-control-api-nodejs`.
 
 ## Importing 
 To Import Control api add
-`import bp from '@bucketplus/bp-control-api-nodejs;` To your code
+`import bp from '@bucketplus/ca-control-api-nodejs;` To your code
 
 ## Environment Variables
 The API expects the following .env variables to be set:
@@ -140,3 +140,26 @@ Each container must invoke `bp.reportFailed(msg)` if a container fails. Develope
 
 #### Logging
 To log data, use `bp.log(...msg)`. This will immediately be passed to `console.log`, making it easy to use, but will also be retained for 30 days in production to enable debugging if needed.
+
+## Notes
+When running actions, the user can choose whether to save the returned JSON (as a separate file), to receive it via webhook, or to process immediately via await - this is handled by the EfficientActions system, i.e. the individual action needs to return some JSON (can be null), and the EfficientActions system will handle the rest. Here are some example manifests:
+
+### Anonymize Image (Object/File Action that produces a file)
+For an object/file action that produces a file, the user specifies:
+* the input file as a parameter (marked as type=file, paramType=input)
+* the output file as a parameter (marked as type=file, paramType=output)
+
+Please note - like all actions, this action will also generate a JSON "return value". In this case, it might be null, or it might contain metadata on the transformation, e.g. the number or position of faces. 
+
+### Extract Text (Object/File Action)
+For an object/file action that produces JSON only, the user specifies:
+* the input file as a parameter (marked as type=file, paramType=input)
+
+Please note - like all actions, this action will also generate a JSON "return value". In this case it definitely will not be null - it will contain the extracted text. 
+
+### Import URL (Import Action)
+For an import action that has no file input, the user specifies:
+* the input URL as a parameter (marked as type=text, paramType=input)
+* the output file as a parameter (marked as type=file, paramType=output)
+
+Please note - like all actions, this action will also generate a JSON "return value". In this case, it might be null, or it might contain metadata on the import, e.g. the content type that was imported. 
