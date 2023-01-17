@@ -30,7 +30,7 @@ Each Standard Container Service must include a `manifest.json` file that include
   * `unit_name` - the plural name of the chargeable unit, e.g. `pixels`, `characters`, `bytes`, or `seconds`
   * `unit_price` - the default chargeable price per unit
 * `params` - an array of custom job parameters that should be passed by the end user when invoking the service container. Each should include:
-  * `name` - the name of the environment variable when passed to the service, e.g. `JP_OUTPUT_LANGUAGE`. All parameter names should start with `JP_` (for job parameter), and should be in ALL_CAPS.
+  * `name` - the name of the environment variable when passed to the service, e.g. `JP_INPUT_FILE`. All parameter names should start with `JP_` (for job parameter), and should be in ALL_CAPS.
   * `label` - a human-readable to help users understand the parameter
   * `description` - a human-readable description to help users understand the parameter 
   * `paramType` - either `input`, `output`, or `option`. 
@@ -62,7 +62,7 @@ The API expects the following .env variables to be set:
 * `CA_JOB_ID` (not needed in development)
 
 ### Job Parameter Environment Variables
-* Each Job Parameter defined in the manifest will be validated and sent using the appropriate name, e.g. `JP_FILE`.
+* Each Job Parameter defined in the manifest will be validated and sent using the appropriate name, e.g. `JP_INPUT_FILE`.
 
 ### Service Secret Environment Variables
 * Each Service Secret defined in the manifest will be validated and sent using the appropriate name, e.g. `SS_GOOGLE_TRANSLATE_API_KEY`.
@@ -142,14 +142,16 @@ paramType is decided based on the need of the parameter. `paramType` is
 `type` is decided by the display and format type for the parameter. `type` is
 * `text` : if the parameter needs a text value. This is a string.
 * `boolean` : if the parameter needs a boolean value. This can be `true` or `false`. 
-* `file`: if the parameter needs a file value. This can be a `bucketurl` *(url,localfile - Coming Soon)* . `bucketurl` is of the format `https://accesskey:secretkey@endpoint/path`, where 
+* `file`: if the parameter needs a file value. This can be a `bucketurl`. *(url,localfile - Coming Soon)* . `bucketurl` is of the format `https://accesskey:secretkey@endpoint/path`, where 
   * `accesskey` and `secretkey` is the access key id and secret access key to access the bucket.
   * `endpoint` is the bucekt endpoint which is provider specific , eg. for a bucket in aws it would be bucket-name.s3.region-code.amazonaws.com'.
   * `path` is the path the bucket where the file is present or needs to be uploaded. It must include the filename with extension. Eg. mydirectory/filename.txt
+  The suggested `name` for this parameter type is `JP_INPUT_FILE`, and suggested `label` is `Input file Path`. 
 * `folder`: if the parameter needs a folder value. This can be a `bucketurl` *(url, localfile - Coming Soon)* . `bucketurl` is of the format `https://accesskey:secretkey@endpoint/path`, where 
   * `accesskey` and `secretkey` are the access key id and secret access key to access the bucket.
   * `endpoint` is provider specific , eg. for aws it would be bucket-name.s3.region-code.amazonaws.com'.
   * `path` is the path of the folder in the bucket where the folder is present or needs to be created. It must include the foldername. Eg. mydirectory/foldername
+ The suggested `name` for this parameter type is `JP_INPUT_FOLDER`, and suggested `label` is `Input file Path`. 
 * `url` : if the parameter needs a url value. This is a string of a valid url format. 
 
 ### Understanding JSON return values
@@ -175,3 +177,21 @@ For an import action that has no file input, in the manifest the user specifies:
 * the output file as a parameter (marked as type=file, paramType=output)
 
 Please note - like all actions, this action will also generate a JSON "return value". In this case, it might be null, or it might contain metadata on the import, e.g. the content type that was imported. 
+
+
+### Naming suggestions for params
+for `type`=`file` and `paramType` = `input` 
+* param `name` = `JP_INPUT_FILE`
+* param `label` = `Input File Path`
+
+for `type`=`file` and `paramType` = `output` 
+* param `name` = `JP_OUTPUT_FILE`
+* param `label` = `Output File Path`
+
+for `type`=`folder` and `paramType` = `input` 
+* param `name` = `JP_INPUT_FOLDER`
+* param `label` = `Input Folder Path`
+
+for `type`=`folder` and `paramType` = `output` 
+* param `name` = `JP_OUTPUT_FOLDER`
+* param `label` = `Output Folder Path`
