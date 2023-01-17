@@ -1,8 +1,8 @@
-# About Cloud Actions
+# About Efficient Actions
 
 This Readme contains info to help developers build Standard Container Services for Cloud Actions.
 
-Standard Container Services import, export, modify, or analyze cloud-based objects. Standard Container Services must:
+Standard Container Services perform modular tasks such as importing and analyzing files or enriching and transforming data. Standard Container Services must:
 1. Contain a valid Dockerfile.
 3. Contain a valid manifest.json file.
 4. Take an input, produce an output or both.
@@ -25,6 +25,7 @@ Each Standard Container Service must include a `manifest.json` file that include
 * `tags` - an array of text tags that describe the action (these should be defined somewhere so people re-use the same labels)
 * `attribution` - info about external services used, if any
   * `name` - the name of the external service that powers the action
+  
   * `url` - the URL of the external service that powers the action
 * `billing` - info about the cost of this service. Collected fees are shared between Bucket+ and the developer.
   * `unit_name` - the plural name of the chargeable unit, e.g. `pixels`, `characters`, `bytes`, or `seconds`
@@ -32,26 +33,16 @@ Each Standard Container Service must include a `manifest.json` file that include
 
 * `params` - an array of custom job parameters that should be passed by the end user when invoking the service container. Each should include:
   * `name` - the name of the environment variable when passed to the service, e.g. `JP_OUTPUT_LANGUAGE`. All parameter names should start with `JP_` (for job parameter), and should be in ALL_CAPS.
-
   * `label` - a human-readable to help users understand the parameter
-
-  * `description` - a human-readable description to help users understand the parameter
-
-  * `type` - the display type for the input, either `text`, `select`, `number`, `email`, `url` or `checkbox`
-
-  * `required` - true if the parameter is required
-  * `options` - an array of options (required for a `type=select` input), each with `label` and `value`
-
-* `secrets` - an array of developer-defined service secrets that should be passed to the service container. Each should include:
-  * `name` - the name of to the environment variable when passed to the service, e.g. `SS_GOOGLE_TRANSLATE_API_KEY`. All secret names should start with `SS_` (for service secret), and should be in ALL_CAPS.
-
-  * `required` - whether the environment variable is required
+  * `description` - a human-readable description to help users understand the parameter 
+  * `paramType` - either `input`, `output`, or `option`. 
+  * `type` - the display type for the input, either `text`, `boolen`, `file` , `url`.   * Support for `select`, `number`, `email`, `url` or `checkbox` - Coming Soon*
+  * `required` - true if the parameter is required  
+  * `defaultValue` - a default value, if any
 
 * `compute` - info about the compute properties of the container
   * `RAM` - the default RAM to allocate to the container, in Gigabytes
-
   * `vCPU` - the default number of vCPUs to allocate to the container
-
   * `spot` - whether the container can run in a spot instance (strongly recommended for services which can safely re-run if terminated early).
 
 # The Control API
@@ -59,11 +50,11 @@ The Efficient Actions Control API contains convenience methods making it easier 
 
 ## Installation
 To install the Control API in a node.js container, run:
- `yarn add @bucketplus/ca-control-api-nodejs`.
+ `yarn add @efficientactions/ca-control-api-nodejs`.
 
 ## Importing 
 To Import Control api add
-`import bp from '@bucketplus/ca-control-api-nodejs;` To your code
+`import bp from '@efficientactions/ca-control-api-nodejs;` To your code
 
 ## Environment Variables
 The API expects the following .env variables to be set:
@@ -129,36 +120,58 @@ The following methods are currently available via the control API:
 ### Lifecycle Updates
 
 #### On Start
-Each container must invoke `bp.reportStarted()` as soon as possible. This is used for timing and to confirm that the container has started.
+Each container must invoke `ca.reportStarted()` as soon as possible. This is used for timing and to confirm that the container has started.
 
 #### On Completion
-Each container must invoke `bp.reportCompleted(data)` as soon as the container has finished running. This is used for timing, and to confirm that the job completed successfully. Containers that fail to call this method will be re-attempted. Developers can optionally pass a `data` object which will be saved to the job history, and sent to the client via requested notification channels.
+Each container must invoke `ca.reportCompleted(data)` as soon as the container has finished running. This is used for timing, and to confirm that the job completed successfully. Containers that fail to call this method will be re-attempted. Developers can optionally pass a `data` object which will be saved to the job history, and sent to the client via requested notification channels.
 
 In addition, on completion each container must call `bp.charge(quantity, unit_name)` to charge the end customer. The `unit` specified MUST match the `unit_name` specified in the manifest. This function should only be invoked once, and only once the job has successfully completed.
 
 #### On Error
-Each container must invoke `bp.reportFailed(msg)` if a container fails. Developers should pass a meaningful `msg` parameter which will be visible to end users. Please note - once a failure report has been sent, the container should exit immediately, and should not send any further updates.
+Each container must invoke `ca.reportFailed(msg)` if a container fails. Developers should pass a meaningful `msg` parameter which will be visible to end users. Please note - once a failure report has been sent, the container should exit immediately, and should not send any further updates.
 
 #### Logging
-To log data, use `bp.log(...msg)`. This will immediately be passed to `console.log`, making it easy to use, but will also be retained for 30 days in production to enable debugging if needed.
+To log data, use `ca.log(...msg)`. This will immediately be passed to `console.log`, making it easy to use, but will also be retained for 30 days in production to enable debugging if needed.
 
 ## Notes
-When running actions, the user can choose whether to save the returned JSON (as a separate file), to receive it via webhook, or to process immediately via await - this is handled by the EfficientActions system, i.e. the individual statndard container service needs to return some JSON (can be null), and the EfficientActions system will handle the rest. Here are some example manifests:
+When running actions, the user can choose whether to save the returned JSON (as a separate file), to receive it via webhook, or to process immediately via await - this is handled by the EfficientActions system, i.e. the individual statndard container service needs to return some JSON (can be null), and the EfficientActions system will handle the rest. 
 
-### Anonymize Image (Object/File Action that produces a file)
+###Understanding manifest `params paramType`:
+paramType is decided based on the need of the parameter. `paramType` is
+* `input` : if the parameter is needed as an `input` to the service
+* `ouput` : if the parameter is an `output` of the service 
+* `option`: if the parameter is neither an input nor an output type and is needed by the service to provide additional information for the job. Eg. jp_language parameter in a text translation service which determines the language in which the service has to translate the text to.
+
+###Understanding manifest `params type`:
+type is the display type and format type for the input. `type` is
+* `text` : if the parameter needs a text value. This is a string.
+* `boolean` : if the parameter needs a boolean value. This can be `true` or `false`. 
+* `file`: if the parameter needs a file value. This can be a `bucketurl` ( *`url` , `localfile` ,  - Coming Soon*). `bucketurl` is of the format `https://accesskey:secretkey@endpoint/path`, where 
+** accesskey and secrets to access the bucket
+** endpoint is provider specific , eg. for aws it would be bucket-name.s3.region-code.amazonaws.com'.
+** the path in the bucket where the file is present or needs to be uploaded. It must include the filename with extension. Eg. mydirectory/filename.txt
+* `folder`: if the parameter needs a folder value. This can be a `bucketurl` ( *`url` , `localfile` ,  - Coming Soon*). `bucketurl` is of the format `https://accesskey:secretkey@endpoint/path`, where 
+** accesskey and secrets to access the bucket
+** endpoint is provider specific , eg. for aws it would be bucket-name.s3.region-code.amazonaws.com'.
+** the path of the folder in the bucket where the folder is present or needs to be created. It must include the foldername. Eg. mydirectory/foldername
+* `url` : if the parameter needs a url value. This is a string of a valid url format. 
+
+Here are some example manifests:
+
+#### Anonymize Image (Object/File Action that produces a file)
 For an object/file action that produces a file, the user specifies:
 * the input file as a parameter (marked as type=file, paramType=input)
 * the output file as a parameter (marked as type=file, paramType=output)
 
 Please note - like all actions, this action will also generate a JSON "return value". In this case, it might be null, or it might contain metadata on the transformation, e.g. the number or position of faces. 
 
-### Extract Text (Object/File Action)
+#### Extract Text (Object/File Action)
 For an object/file action that produces JSON only, the user specifies:
 * the input file as a parameter (marked as type=file, paramType=input)
 
 Please note - like all actions, this action will also generate a JSON "return value". In this case it definitely will not be null - it will contain the extracted text. 
 
-### Import URL (Import Action)
+#### Import URL (Import Action)
 For an import action that has no file input, the user specifies:
 * the input URL as a parameter (marked as type=text, paramType=input)
 * the output file as a parameter (marked as type=file, paramType=output)
