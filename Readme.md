@@ -139,7 +139,7 @@ paramType is decided based on the need of the parameter. `paramType` is
 * `option`: if the parameter is neither an input nor an output type and is needed by the service to provide additional information for the job. Eg. jp_language parameter in a text translation service which determines the language in which the service has to translate the text to.
 
 ### Understanding manifest `params type`
-type is the display type and format type for the input. `type` is
+`type` is decided by the display and format type for the parameter. `type` is
 * `text` : if the parameter needs a text value. This is a string.
 * `boolean` : if the parameter needs a boolean value. This can be `true` or `false`. 
 * `file`: if the parameter needs a file value. This can be a `bucketurl` *(url,localfile - Coming Soon)* . `bucketurl` is of the format `https://accesskey:secretkey@endpoint/path`, where 
