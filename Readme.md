@@ -136,14 +136,14 @@ To log data, use `ca.log(...msg)`. This will immediately be passed to `console.l
 paramType is decided based on the need of the parameter. `paramType` is
 * `input` : if the parameter is needed as an `input` to the service
 * `ouput` : if the parameter is an `output` of the service 
-* `option`: if the parameter is neither an input nor an output type and is needed by the service to provide additional information for the job. Eg. jp_language parameter in a text translation service which determines the language in which the service has to translate the text to.
+* `option`: if the parameter is neither an input nor an output type and is needed by the service to provide additional information for the job. Eg. a JP_CONVERT_LANGUAGE parameter in a text translation service which determines the language in which the service has to translate the text to.
 
 ### Understanding manifest `params type`
 `type` is decided by the display and format type for the parameter. `type` is
 * `text` : if the parameter needs a text value. This is a string.
 * `boolean` : if the parameter needs a boolean value. This can be `true` or `false`. 
 * `file`: if the parameter needs a file value. This can be a `bucketurl` *(url,localfile - Coming Soon)* . `bucketurl` is of the format `https://accesskey:secretkey@endpoint/path`, where 
-  * `accesskey` and `secretkey` are the access key id and secret access key to access the bucket.
+  * `accesskey` and `secretkey` is the access key id and secret access key to access the bucket.
   * `endpoint` is the bucekt endpoint which is provider specific , eg. for a bucket in aws it would be bucket-name.s3.region-code.amazonaws.com'.
   * `path` is the path the bucket where the file is present or needs to be uploaded. It must include the filename with extension. Eg. mydirectory/filename.txt
 * `folder`: if the parameter needs a folder value. This can be a `bucketurl` *(url, localfile - Coming Soon)* . `bucketurl` is of the format `https://accesskey:secretkey@endpoint/path`, where 
