@@ -131,28 +131,29 @@ Each container must invoke `ca.reportFailed(msg)` if a container fails. Develope
 To log data, use `ca.log(...msg)`. This will immediately be passed to `console.log`, making it easy to use, but will also be retained for 30 days in production to enable debugging if needed.
 
 ## Notes
-When running actions, the user can choose whether to save the returned JSON (as a separate file), to receive it via webhook, or to process immediately via await - this is handled by the EfficientActions system, i.e. the individual statndard container service needs to return some JSON (can be null), and the EfficientActions system will handle the rest. 
 
-### Understanding manifest `params paramType`:
+### Understanding manifest `params paramType`
 paramType is decided based on the need of the parameter. `paramType` is
 * `input` : if the parameter is needed as an `input` to the service
 * `ouput` : if the parameter is an `output` of the service 
 * `option`: if the parameter is neither an input nor an output type and is needed by the service to provide additional information for the job. Eg. jp_language parameter in a text translation service which determines the language in which the service has to translate the text to.
 
-### Understanding manifest `params type`:
+### Understanding manifest `params type`
 type is the display type and format type for the input. `type` is
 * `text` : if the parameter needs a text value. This is a string.
 * `boolean` : if the parameter needs a boolean value. This can be `true` or `false`. 
 * `file`: if the parameter needs a file value. This can be a `bucketurl` *(url,localfile - Coming Soon)* . `bucketurl` is of the format `https://accesskey:secretkey@endpoint/path`, where 
- * `accesskey` and `secretkey` are the access key id and secret access key to access the bucket.
- * `endpoint` is the bucekt endpoint which is provider specific , eg. for a bucket in aws it would be bucket-name.s3.region-code.amazonaws.com'.
- * `path` is the path the bucket where the file is present or needs to be uploaded. It must include the filename with extension. Eg. mydirectory/filename.txt
+  * `accesskey` and `secretkey` are the access key id and secret access key to access the bucket.
+  * `endpoint` is the bucekt endpoint which is provider specific , eg. for a bucket in aws it would be bucket-name.s3.region-code.amazonaws.com'.
+  * `path` is the path the bucket where the file is present or needs to be uploaded. It must include the filename with extension. Eg. mydirectory/filename.txt
 * `folder`: if the parameter needs a folder value. This can be a `bucketurl` *(url, localfile - Coming Soon)* . `bucketurl` is of the format `https://accesskey:secretkey@endpoint/path`, where 
- * `accesskey` and `secretkey` are the access key id and secret access key to access the bucket.
- * `endpoint` is provider specific , eg. for aws it would be bucket-name.s3.region-code.amazonaws.com'.
- * `path` is the path of the folder in the bucket where the folder is present or needs to be created. It must include the foldername. Eg. mydirectory/foldername
+  * `accesskey` and `secretkey` are the access key id and secret access key to access the bucket.
+  * `endpoint` is provider specific , eg. for aws it would be bucket-name.s3.region-code.amazonaws.com'.
+  * `path` is the path of the folder in the bucket where the folder is present or needs to be created. It must include the foldername. Eg. mydirectory/foldername
 * `url` : if the parameter needs a url value. This is a string of a valid url format. 
 
+### Understanding JSON return values
+When running actions, the user can choose whether to save the returned JSON (as a separate file), to receive it via webhook, or to process immediately via await - this is handled by the EfficientActions system, i.e. the individual statndard container service needs to return some JSON (can be null), and the EfficientActions system will handle the rest. 
 Here are some example scenarios:
 
 #### Anonymize Image (Object/File Action that produces a file)
