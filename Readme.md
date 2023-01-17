@@ -36,7 +36,7 @@ Each Standard Container Service must include a `manifest.json` file that include
   * `label` - a human-readable to help users understand the parameter
   * `description` - a human-readable description to help users understand the parameter 
   * `paramType` - either `input`, `output`, or `option`. 
-  * `type` - the display type for the input, either `text`, `boolen`, `file` , `url`.   * Support for `select`, `number`, `email`, `url` or `checkbox` - Coming Soon*
+  * `type` - the display type for the input, either `text`, `boolen`, `file` , `url`.   *Support for select, number, email, url or checkbox - Coming Soon*
   * `required` - true if the parameter is required  
   * `defaultValue` - a default value, if any
 
@@ -136,21 +136,21 @@ To log data, use `ca.log(...msg)`. This will immediately be passed to `console.l
 ## Notes
 When running actions, the user can choose whether to save the returned JSON (as a separate file), to receive it via webhook, or to process immediately via await - this is handled by the EfficientActions system, i.e. the individual statndard container service needs to return some JSON (can be null), and the EfficientActions system will handle the rest. 
 
-###Understanding manifest `params paramType`:
+### Understanding manifest `params paramType`:
 paramType is decided based on the need of the parameter. `paramType` is
 * `input` : if the parameter is needed as an `input` to the service
 * `ouput` : if the parameter is an `output` of the service 
 * `option`: if the parameter is neither an input nor an output type and is needed by the service to provide additional information for the job. Eg. jp_language parameter in a text translation service which determines the language in which the service has to translate the text to.
 
-###Understanding manifest `params type`:
+### Understanding manifest `params type`:
 type is the display type and format type for the input. `type` is
 * `text` : if the parameter needs a text value. This is a string.
 * `boolean` : if the parameter needs a boolean value. This can be `true` or `false`. 
-* `file`: if the parameter needs a file value. This can be a `bucketurl` ( *`url` , `localfile` ,  - Coming Soon*). `bucketurl` is of the format `https://accesskey:secretkey@endpoint/path`, where 
+* `file`: if the parameter needs a file value. This can be a `bucketurl` *(url,localfile - Coming Soon)* . `bucketurl` is of the format `https://accesskey:secretkey@endpoint/path`, where 
 ** accesskey and secrets to access the bucket
 ** endpoint is provider specific , eg. for aws it would be bucket-name.s3.region-code.amazonaws.com'.
 ** the path in the bucket where the file is present or needs to be uploaded. It must include the filename with extension. Eg. mydirectory/filename.txt
-* `folder`: if the parameter needs a folder value. This can be a `bucketurl` ( *`url` , `localfile` ,  - Coming Soon*). `bucketurl` is of the format `https://accesskey:secretkey@endpoint/path`, where 
+* `folder`: if the parameter needs a folder value. This can be a `bucketurl` *(url, localfile - Coming Soon)* . `bucketurl` is of the format `https://accesskey:secretkey@endpoint/path`, where 
 ** accesskey and secrets to access the bucket
 ** endpoint is provider specific , eg. for aws it would be bucket-name.s3.region-code.amazonaws.com'.
 ** the path of the folder in the bucket where the folder is present or needs to be created. It must include the foldername. Eg. mydirectory/foldername
