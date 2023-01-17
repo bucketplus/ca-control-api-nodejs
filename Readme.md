@@ -5,8 +5,9 @@ This Readme contains info to help developers build Standard Container Services f
 Standard Container Services import, export, modify, or analyze cloud-based objects. Standard Container Services must:
 1. Contain a valid Dockerfile.
 3. Contain a valid manifest.json file.
-4. Either take an input or produce an output or both.
-4. Use the Control API to send progress updates.
+4. Take an input, produce an output or both.
+5. Return a JSON.
+6. Use the Control API to send progress updates.
 
 # Dockerfile
 Each Standard Container Service must include a Dockerfile that runs one job to completion, then terminates. It should terminate as quickly as possible, and should not start a long-running service (e.g. it should not start a Node.js express server). It should be as light as possible.
@@ -142,7 +143,7 @@ Each container must invoke `bp.reportFailed(msg)` if a container fails. Develope
 To log data, use `bp.log(...msg)`. This will immediately be passed to `console.log`, making it easy to use, but will also be retained for 30 days in production to enable debugging if needed.
 
 ## Notes
-When running actions, the user can choose whether to save the returned JSON (as a separate file), to receive it via webhook, or to process immediately via await - this is handled by the EfficientActions system, i.e. the individual action needs to return some JSON (can be null), and the EfficientActions system will handle the rest. Here are some example manifests:
+When running actions, the user can choose whether to save the returned JSON (as a separate file), to receive it via webhook, or to process immediately via await - this is handled by the EfficientActions system, i.e. the individual statndard container service needs to return some JSON (can be null), and the EfficientActions system will handle the rest. Here are some example manifests:
 
 ### Anonymize Image (Object/File Action that produces a file)
 For an object/file action that produces a file, the user specifies:
