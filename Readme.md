@@ -16,31 +16,56 @@ Each Standard Container Service must include a Dockerfile that runs one job to c
 Each Standard Container Service must include a `manifest.json` file that includes:
 
 * `version` - the manifest version - set to `0.1` for now.
+
 * `controlVersion` - the version of the control API it relies on
+
 * `public` - whether the action should be listed in our marketplace, or private to the user
+
 * `name` - the name of the service.
+
 * `description` - a human-readable description of the service.
+
 * `icon` - path to a local 512x512 jpg or png file that represents the service.
+
 * `developer` - the email address of the developer (should match their login)
+
 * `tags` - an array of text tags that describe the action (these should be defined somewhere so people re-use the same labels)
+
 * `attribution` - info about external services used, if any
+
   * `name` - the name of the external service that powers the action
+  
   * `url` - the URL of the external service that powers the action
+  
 * `billing` - info about the cost of this service. Collected fees are shared between Bucket+ and the developer.
+
   * `unit_name` - the plural name of the chargeable unit, e.g. `pixels`, `characters`, `bytes`, or `seconds`
+  
   * `unit_price` - the default chargeable price per unit
+  
 * `params` - an array of custom job parameters that should be passed by the end user when invoking the service container. Each should include:
+
   * `name` - the name of the environment variable when passed to the service, e.g. `JP_INPUT_FILE`. All parameter names should start with `JP_` (for job parameter), and should be in ALL_CAPS.
+  
   * `label` - a human-readable to help users understand the parameter
+  
   * `description` - a human-readable description to help users understand the parameter 
+  
   * `paramType` - either `input`, `output`, or `option`. 
+  
   * `type` - the display type for the input, either `text`, `boolen`, `file` , `url`.   *Support for select, number, email, url or checkbox - Coming Soon*
+  
   * `required` - true if the parameter is required  
+  
   * `defaultValue` - a default value, if any
+  
 * `compute` - info about the compute properties of the container
+
   * `RAM` - the default RAM to allocate to the container, in Gigabytes
+  
   * `vCPU` - the default number of vCPUs to allocate to the container
-  * `spot` - whether the container can run in a spot instance (strongly recommended for services which can safely re-run if terminated early).
+  
+  * `spot` - whether the container can run in a spot instance (strongly recommended for services which can safely re-run if terminated early). *Coming Soon*
 
 # The Control API
 The Efficient Actions Control API contains convenience methods making it easier for service developers to. This repo contains code for Node.js based containers.
@@ -154,6 +179,23 @@ paramType is decided based on the need of the parameter. `paramType` is
  The suggested `name` for this parameter type is `JP_INPUT_FOLDER`, and suggested `label` is `Input file Path`. 
 * `url` : if the parameter needs a url value. This is a string of a valid url format. 
 
+### Naming suggestions for manifest `params`
+for `type`=`file` and `paramType` = `input` 
+* param `name` = `JP_INPUT_FILE`
+* param `label` = `Input File Path`
+
+for `type`=`file` and `paramType` = `output` 
+* param `name` = `JP_OUTPUT_FILE`
+* param `label` = `Output File Path`
+
+for `type`=`folder` and `paramType` = `input` 
+* param `name` = `JP_INPUT_FOLDER`
+* param `label` = `Input Folder Path`
+
+for `type`=`folder` and `paramType` = `output` 
+* param `name` = `JP_OUTPUT_FOLDER`
+* param `label` = `Output Folder Path`
+
 ### Understanding JSON return values
 When running actions, the user can choose whether to save the returned JSON (as a separate file), to receive it via webhook, or to process immediately via await - this is handled by the EfficientActions system, i.e. the individual statndard container service needs to return some JSON (can be null), and the EfficientActions system will handle the rest. 
 Here are some example scenarios:
@@ -177,21 +219,3 @@ For an import action that has no file input, in the manifest the user specifies:
 * the output file as a parameter (marked as type=file, paramType=output)
 
 Please note - like all actions, this action will also generate a JSON "return value". In this case, it might be null, or it might contain metadata on the import, e.g. the content type that was imported. 
-
-
-### Naming suggestions for params
-for `type`=`file` and `paramType` = `input` 
-* param `name` = `JP_INPUT_FILE`
-* param `label` = `Input File Path`
-
-for `type`=`file` and `paramType` = `output` 
-* param `name` = `JP_OUTPUT_FILE`
-* param `label` = `Output File Path`
-
-for `type`=`folder` and `paramType` = `input` 
-* param `name` = `JP_INPUT_FOLDER`
-* param `label` = `Input Folder Path`
-
-for `type`=`folder` and `paramType` = `output` 
-* param `name` = `JP_OUTPUT_FOLDER`
-* param `label` = `Output Folder Path`
