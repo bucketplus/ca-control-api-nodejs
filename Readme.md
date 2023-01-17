@@ -86,44 +86,44 @@ The following methods are currently available via the control API:
 
 #### Presigned URLs are generated for temporary download/upload access objects using a single url.
 
-* `bp.getSignedInputFileUrl(bucketUrl)` - return signed url for a file to read.
+* `ca.getSignedInputFileUrl(bucketUrl)` - return signed url for a file to read.
 
-* `bp.getSignedOutputFileUrl(bucketUrl)` - return signed url for a file to write.
+* `ca.getSignedOutputFileUrl(bucketUrl)` - return signed url for a file to write.
 
-* `bp.getSignedOutputUrlForKey(bucketUrl, key)` - return signed url for a file to write for specified key path.
+* `ca.getSignedOutputUrlForKey(bucketUrl, key)` - return signed url for a file to write for specified key path.
 
 ### Reading Inputs
 
 #### For input.type = `file` containers
-* `bp.readFileAsStream(bucketUrl)` - reads the cloud input file as a stream. Recommended for small files, e.g. text and image files.
+* `ca.readFileAsStream(bucketUrl)` - reads the cloud input file as a stream. Recommended for small files, e.g. text and image files.
 
-* `bp.readFile(bucketUrl)` - reads the cloud input file as aa object. Recommended for small files, e.g. text and image files.
+* `ca.readFile(bucketUrl)` - reads the cloud input file as aa object. Recommended for small files, e.g. text and image files.
 
-* `bp.downloadFile(bucketUrl, localPath)` - downloads the cloud input file to a local relative path. Recommended for larger files, e.g. video files.
+* `ca.downloadFile(bucketUrl, localPath)` - downloads the cloud input file to a local relative path. Recommended for larger files, e.g. video files.
 
 #### For input.type = `folder` containers
-* `bp.downloadInputFiles(localFolderPath, bucketUrl)` - downloads all cloud input files to a local folder. *Coming Soon*
+* `ca.downloadInputFiles(localFolderPath, bucketUrl)` - downloads all cloud input files to a local folder. *Coming Soon*
 
-* `bp.listInputFolderObjects(bucketUrl)` - provides an array of all cloud input files in a folder.
+* `ca.listInputFolderObjects(bucketUrl)` - provides an array of all cloud input files in a folder.
 
 
 ### Writing Outputs
 
 #### For output.type = `file` containers
 
-* `bp.writeStreamToFile(bucketUrl, fileStream)` - writes content to the cloud output file from stream/Buffer. The maximum size of a single object is limited to 5TB.
+* `ca.writeStreamToFile(bucketUrl, fileStream)` - writes content to the cloud output file from stream/Buffer. The maximum size of a single object is limited to 5TB.
 
-* `bp.writeFile(bucketUrl, content)` - writes content to the cloud output file. Recommended for small files, e.g. text and image files.
+* `ca.writeFile(bucketUrl, content)` - writes content to the cloud output file. Recommended for small files, e.g. text and image files.
 
-* `bp.writeFileToKey(bucketUrl, content, key)` -writes content to the cloud output file for specified key path. Recommended for small files, e.g. text and image files.
+* `ca.writeFileToKey(bucketUrl, content, key)` -writes content to the cloud output file for specified key path. Recommended for small files, e.g. text and image files.
 
-* `bp.uploadFile(bucketUrl, localPath, contentType)` - uploads a specified local file to the cloud output file.
+* `ca.uploadFile(bucketUrl, localPath, contentType)` - uploads a specified local file to the cloud output file.
 
-* `bp.uploadFileToKey(bucketUrl, localPath, contentType, key)` - uploads a specified local file to the cloud output file for specified key path.
+* `ca.uploadFileToKey(bucketUrl, localPath, contentType, key)` - uploads a specified local file to the cloud output file for specified key path.
 
 #### For output.type = `folder` containers
 
-* `bp.uploadOutputFiles(localFolderPath, bucketUrl)` - uploads all the files from a specified local folder to the cloud output folder. *Coming Soon*
+* `ca.uploadOutputFiles(localFolderPath, bucketUrl)` - uploads all the files from a specified local folder to the cloud output folder. *Coming Soon*
 
 
 ### Lifecycle Updates
