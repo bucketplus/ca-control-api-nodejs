@@ -1,10 +1,11 @@
-# About Bucket+
+# About Cloud Actions
 
-This Readme contains info to help developers build Bucket+ Standard Container Services.
+This Readme contains info to help developers build Standard Container Services for Cloud Actions.
 
 Standard Container Services import, export, modify, or analyze cloud-based objects. Standard Container Services must:
-1. Contain a valid Dockerfile
+1. Contain a valid Dockerfile.
 3. Contain a valid manifest.json file.
+4. Either take an input or produce an output or both.
 4. Use the Control API to send progress updates.
 
 # Dockerfile
@@ -14,20 +15,18 @@ Each Standard Container Service must include a Dockerfile that runs one job to c
 Each Standard Container Service must include a `manifest.json` file that includes:
 
 * `version` - the manifest version - set to `0.1` for now.
+* `controlVersion` - the version of the control API it relies on
+* `public` - whether the action should be listed in our marketplace, or private to the user
 * `name` - the name of the service.
 * `description` - a human-readable description of the service.
 * `icon` - path to a local 512x512 jpg or png file that represents the service.
-* `input` - info about the expected bucket path input, if any. This should include:
-  * `type` - either `file`, `folder`, or `bucket`.
-
-  * `supportedExtensions` (for `input.type=file` only) - an array of file extensions supported by this service, e.g. `.jpg`, `.png`.
-* `output` - info about the expected bucket path output, if any. This should include:
-  * `type` - either `file` or `folder`.
-
-  * `defaultPath` - this should specify a default path where output files will be written. It will be appended to the input file path.
+* `developer` - the email address of the developer (should match their login)
+* `tags` - an array of text tags that describe the action (these should be defined somewhere so people re-use the same labels)
+* `attribution` - info about external services used, if any
+  * `name` - the name of the external service that powers the action
+  * `url` - the URL of the external service that powers the action
 * `billing` - info about the cost of this service. Collected fees are shared between Bucket+ and the developer.
   * `unit_name` - the plural name of the chargeable unit, e.g. `pixels`, `characters`, `bytes`, or `seconds`
-
   * `unit_price` - the default chargeable price per unit
 
 * `params` - an array of custom job parameters that should be passed by the end user when invoking the service container. Each should include:
