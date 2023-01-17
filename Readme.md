@@ -25,12 +25,10 @@ Each Standard Container Service must include a `manifest.json` file that include
 * `tags` - an array of text tags that describe the action (these should be defined somewhere so people re-use the same labels)
 * `attribution` - info about external services used, if any
   * `name` - the name of the external service that powers the action
-  
   * `url` - the URL of the external service that powers the action
 * `billing` - info about the cost of this service. Collected fees are shared between Bucket+ and the developer.
   * `unit_name` - the plural name of the chargeable unit, e.g. `pixels`, `characters`, `bytes`, or `seconds`
   * `unit_price` - the default chargeable price per unit
-
 * `params` - an array of custom job parameters that should be passed by the end user when invoking the service container. Each should include:
   * `name` - the name of the environment variable when passed to the service, e.g. `JP_OUTPUT_LANGUAGE`. All parameter names should start with `JP_` (for job parameter), and should be in ALL_CAPS.
   * `label` - a human-readable to help users understand the parameter
@@ -39,7 +37,6 @@ Each Standard Container Service must include a `manifest.json` file that include
   * `type` - the display type for the input, either `text`, `boolen`, `file` , `url`.   *Support for select, number, email, url or checkbox - Coming Soon*
   * `required` - true if the parameter is required  
   * `defaultValue` - a default value, if any
-
 * `compute` - info about the compute properties of the container
   * `RAM` - the default RAM to allocate to the container, in Gigabytes
   * `vCPU` - the default number of vCPUs to allocate to the container
@@ -147,33 +144,33 @@ type is the display type and format type for the input. `type` is
 * `text` : if the parameter needs a text value. This is a string.
 * `boolean` : if the parameter needs a boolean value. This can be `true` or `false`. 
 * `file`: if the parameter needs a file value. This can be a `bucketurl` *(url,localfile - Coming Soon)* . `bucketurl` is of the format `https://accesskey:secretkey@endpoint/path`, where 
-** accesskey and secrets to access the bucket
-** endpoint is provider specific , eg. for aws it would be bucket-name.s3.region-code.amazonaws.com'.
-** the path in the bucket where the file is present or needs to be uploaded. It must include the filename with extension. Eg. mydirectory/filename.txt
+ * `accesskey` and `secretkey` are the access key id and secret access key to access the bucket.
+ * `endpoint` is the bucekt endpoint which is provider specific , eg. for a bucket in aws it would be bucket-name.s3.region-code.amazonaws.com'.
+ * `path` is the path the bucket where the file is present or needs to be uploaded. It must include the filename with extension. Eg. mydirectory/filename.txt
 * `folder`: if the parameter needs a folder value. This can be a `bucketurl` *(url, localfile - Coming Soon)* . `bucketurl` is of the format `https://accesskey:secretkey@endpoint/path`, where 
-** accesskey and secrets to access the bucket
-** endpoint is provider specific , eg. for aws it would be bucket-name.s3.region-code.amazonaws.com'.
-** the path of the folder in the bucket where the folder is present or needs to be created. It must include the foldername. Eg. mydirectory/foldername
+ * `accesskey` and `secretkey` are the access key id and secret access key to access the bucket.
+ * `endpoint` is provider specific , eg. for aws it would be bucket-name.s3.region-code.amazonaws.com'.
+ * `path` is the path of the folder in the bucket where the folder is present or needs to be created. It must include the foldername. Eg. mydirectory/foldername
 * `url` : if the parameter needs a url value. This is a string of a valid url format. 
 
-Here are some example manifests:
+Here are some example scenarios:
 
 #### Anonymize Image (Object/File Action that produces a file)
-For an object/file action that produces a file, the user specifies:
+For an object/file action that produces a file, in the manifest the user specifies:
 * the input file as a parameter (marked as type=file, paramType=input)
 * the output file as a parameter (marked as type=file, paramType=output)
 
 Please note - like all actions, this action will also generate a JSON "return value". In this case, it might be null, or it might contain metadata on the transformation, e.g. the number or position of faces. 
 
 #### Extract Text (Object/File Action)
-For an object/file action that produces JSON only, the user specifies:
+For an object/file action that produces JSON only, in the manifest the user specifies:
 * the input file as a parameter (marked as type=file, paramType=input)
 
 Please note - like all actions, this action will also generate a JSON "return value". In this case it definitely will not be null - it will contain the extracted text. 
 
 #### Import URL (Import Action)
-For an import action that has no file input, the user specifies:
-* the input URL as a parameter (marked as type=text, paramType=input)
+For an import action that has no file input, in the manifest the user specifies:
+* the input URL as a parameter (marked as type=url, paramType=input)
 * the output file as a parameter (marked as type=file, paramType=output)
 
 Please note - like all actions, this action will also generate a JSON "return value". In this case, it might be null, or it might contain metadata on the import, e.g. the content type that was imported. 
