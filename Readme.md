@@ -51,10 +51,12 @@ Each Standard Container Service must include a `manifest.json` file that include
   
   * `description` - a human-readable description to help users understand the parameter 
   
-  * `paramType` - either `input`, `output`, or `option`. 
+  * `paramType` - either `input`, `output`, or `option`.
   
   * `type` - the display type for the input, either `text`, `boolen`, `file` , `url`.   *Support for select, number, email, url or checkbox - Coming Soon*
-  
+
+  * `fileTypes` - array of mime types supported of file if params.type is file,This can be from predefined group of mime types or array of any mime types, Some predefined fileTypes are : `image`, `video`, `document`.
+
   * `required` - true if the parameter is required  
   
   * `defaultValue` - a default value, if any

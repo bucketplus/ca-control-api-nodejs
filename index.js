@@ -1,3 +1,4 @@
+import './config.js'
 import axios from 'axios';
 import * as Minio from 'minio';
 
