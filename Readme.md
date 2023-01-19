@@ -203,6 +203,9 @@ for `type`=`folder` and `paramType` = `output`
 ### Understanding JSON return values
 When running actions, the user can choose whether to save the returned JSON (as a separate file), to receive it via webhook, or to process immediately via await - this is handled by the EfficientActions system, i.e. the individual statndard container service needs to return some JSON (can be null), and the EfficientActions system will handle the rest. 
 Here are some example scenarios:
+https://github.com/bucketplus/bp-action-import-file-from-url
+https://github.com/bucketplus/bp-action-image-ocr
+https://github.com/bucketplus/bp-action-remove-bg-from-images
 
 #### Anonymize Image (Object/File Action that produces a file)
 For an object/file action that produces a file, in the manifest the user specifies:
