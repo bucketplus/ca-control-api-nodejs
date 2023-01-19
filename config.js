@@ -109,15 +109,24 @@ const expectedManifest = {
   }
 };
 
-function checkObject(expectedObject, parsedObject, key) {
-  if(expectedObject.required && !parsedObject) 
+function checkObject(expectedObject, parsedValue, key) {
+  if(expectedObject.required && !parsedValue) 
     throw new Error(`${key} not found in manifest file`);
-  if(parsedObject){
+  if(parsedValue){
     if(typeof(expectedObject.expectedFormat) === 'object')
       for(let subkey in expectedObject.expectedFormat)
-        checkObject(expectedObject.expectedFormat[subkey], parsedObject[subkey], subkey);
-    else if(typeof(parsedObject) !== typeof(expectedObject.expectedFormat))
-      throw new Error(`${key} in manifest file should be of ${typeof(expectedObject.expectedFormat)} type`) 
+        checkObject(expectedObject.expectedFormat[subkey], parsedValue[subkey], subkey);
+    else {
+      if(typeof(parsedValue) !== typeof(expectedObject.expectedFormat))
+        throw new Error(`${key} in manifest file should be of ${typeof(expectedObject.expectedFormat)} type`) 
+      if(expectedObject.options) {
+        let matched = false;
+        expectedObject.options.forEach(option => {
+          if(parsedValue === option) matched = true
+        });
+        if(!matched) throw new Error(`${parsedValue} is not allowed in ${key}`)
+      }
+    }
   }
 }
 
