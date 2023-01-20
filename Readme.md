@@ -77,8 +77,8 @@ To install the Control API in a node.js container, run:
  `yarn add @efficientactions/ca-control-api-nodejs`.
 
 ## Importing 
-To Import Control api add
-`import bp from '@efficientactions/ca-control-api-nodejs;` To your code
+To import the Control api, add:
+`import ca from '@efficientactions/ca-control-api-nodejs;` to your code
 
 ## Environment Variables
 The API expects the following .env variables to be set:
@@ -203,26 +203,29 @@ for `type`=`folder` and `paramType` = `output`
 ### Understanding JSON return values
 When running actions, the user can choose whether to save the returned JSON (as a separate file), to receive it via webhook, or to process immediately via await - this is handled by the EfficientActions system, i.e. the individual statndard container service needs to return some JSON (can be null), and the EfficientActions system will handle the rest. 
 Here are some example scenarios:
-https://github.com/bucketplus/bp-action-import-file-from-url
-https://github.com/bucketplus/bp-action-image-ocr
-https://github.com/bucketplus/bp-action-remove-bg-from-images
 
-#### Anonymize Image (Object/File Action that produces a file)
+#### Anonymize Image (Object/File Action that produces an anonymized file from the input file)
 For an object/file action that produces a file, in the manifest the user specifies:
 * the input file as a parameter (marked as type=file, paramType=input)
 * the output file as a parameter (marked as type=file, paramType=output)
 
 Please note - like all actions, this action will also generate a JSON "return value". In this case, it might be null, or it might contain metadata on the transformation, e.g. the number or position of faces. 
 
-#### Extract Text (Object/File Action)
+#### Extract Text (Object/File Action that extracts the text from a file)
 For an object/file action that produces JSON only, in the manifest the user specifies:
 * the input file as a parameter (marked as type=file, paramType=input)
 
 Please note - like all actions, this action will also generate a JSON "return value". In this case it definitely will not be null - it will contain the extracted text. 
 
-#### Import URL (Import Action)
+#### Import URL (Import Action that imports a file from a URL)
 For an import action that has no file input, in the manifest the user specifies:
 * the input URL as a parameter (marked as type=url, paramType=input)
 * the output file as a parameter (marked as type=file, paramType=output)
 
 Please note - like all actions, this action will also generate a JSON "return value". In this case, it might be null, or it might contain metadata on the import, e.g. the content type that was imported. 
+
+
+### Example Actions
+* https://github.com/bucketplus/bp-action-import-file-from-url
+* https://github.com/bucketplus/bp-action-image-ocr
+* https://github.com/bucketplus/bp-action-remove-bg-from-images
