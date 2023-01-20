@@ -29,10 +29,6 @@ const expectedParamType = {
     required: false,
     expectedFormat: ''
   },
-  required: {
-    required: true,
-    expectedFormat: false
-  },
   defaultValue: {
     required: false
   }
@@ -109,7 +105,7 @@ const expectedManifest = {
 };
 
 function checkObject(expectedObject, parsedValue, key) {
-  if(expectedObject.required && !parsedValue) 
+  if(expectedObject.required && !parsedValue)
     throw new Error(`${key} not found in manifest file`);
   if(parsedValue){
     if(typeof(expectedObject.expectedFormat) === 'object')

@@ -211,8 +211,8 @@ async function reportStarted() {
   await setStatus('STARTED');
 }
 
-async function reportCompleted(msg, file) {
-  await setStatus('COMPLETED', msg, file);
+async function reportCompleted(data, file) {
+  await setStatus('COMPLETED', data, file);
 }
 
 async function reportFailed(msg) {
