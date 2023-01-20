@@ -6,7 +6,6 @@ const __dirname = path.dirname(__filename);
 const manifestfile = fs.readFileSync(path.join(__dirname, '../../../manifest.json'))
 const manifestObject = JSON.parse(manifestfile.toString());
 
-
 const expectedParamType = {
   label: {
     required: true,
@@ -24,7 +23,7 @@ const expectedParamType = {
   type: {
     required: true,
     expectedFormat: '',
-    options: ['text', 'boolen', 'file', 'url']
+    options: ['text', 'boolen', 'file', 'url', 'json']
   },
   fileTypes: {
     required: false,

@@ -195,13 +195,14 @@ async function log(...msg) {
   }
 }
 
-async function setStatus(status, msg) {
+async function setStatus(status, msg, file) {
   console.log('Set job status to', status, msg);
   if (isProd) {
     await axios.post(`${CA_ENDPOINT}/status`, {
       jobId: process.env.CA_JOB_ID,
       status,
       msg,
+      file
     });
   }
 }
@@ -210,8 +211,8 @@ async function reportStarted() {
   await setStatus('STARTED');
 }
 
-async function reportCompleted(msg) {
-  await setStatus('COMPLETED', msg);
+async function reportCompleted(msg, file) {
+  await setStatus('COMPLETED', msg, file);
 }
 
 async function reportFailed(msg) {
