@@ -147,7 +147,7 @@ The following methods are currently available via the control API:
 Each container must invoke `ca.reportStarted()` as soon as possible. This is used for timing and to confirm that the container has started.
 
 #### On Completion
-Each container must invoke `ca.reportCompleted(data)` as soon as the container has finished running. This is used for timing, and to confirm that the job completed successfully. Containers that fail to call this method will be re-attempted. Developers can optionally pass a `data` object which will be saved to the job history, and sent to the client via requested notification channels.
+Each container must invoke `ca.reportCompleted(data, file)` as soon as the container has finished running. This is used for timing, and to confirm that the job completed successfully. Containers that fail to call this method will be re-attempted. Developers can optionally pass a `data` object and `file` stream. `data` will be saved to the job history. `data` object and `file` stream are sent to the client via requested notification channels.
 
 In addition, on completion each container must call `ca.charge(quantity, unit_name)` to charge the end customer. The `unit` specified MUST match the `unit_name` specified in the manifest. This function should only be invoked once, and only once the job has successfully completed.
 
