@@ -142,7 +142,7 @@ The following methods are currently available via the control API:
 
 ### Handling File output
 
-* `ca.sendReportFile(fileStream)` - If client requested filestream via webhook or to directly process it, developer can use this function to send filestream and EfficientActions system will handle the rest.
+* `ca.sendFile(fileStream)` - If client requested filestream via webhook or to directly process it, developer can use this function to send filestream and EfficientActions system will handle the rest.
 
 
 ### Lifecycle Updates

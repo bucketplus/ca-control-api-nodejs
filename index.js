@@ -168,8 +168,8 @@ async function uploadFileToKey(bucketUrl, localPath, contentType, key) {
   );
 }
 
-async function sendReportFile(fileStream) {
-  await axios.post(`${CA_ENDPOINT}/report`, {
+async function sendFile(fileStream) {
+  await axios.post(`${CA_ENDPOINT}/file`, {
     jobId: process.env.CA_JOB_ID,
     file: fileStream
   });
@@ -242,7 +242,7 @@ export default {
   uploadFile,
   uploadFileToKey,
 
-  sendReportFile,
+  sendFile,
   
   charge,
   log,
