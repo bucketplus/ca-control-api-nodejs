@@ -168,6 +168,12 @@ async function uploadFileToKey(bucketUrl, localPath, contentType, key) {
   );
 }
 
+async function sendReportFile(fileStream) {
+  await axios.post(`${CA_ENDPOINT}/report`, {
+    jobId: process.env.CA_JOB_ID,
+    file: fileStream
+  });
+}
 
 // -----------------------------
 // Lifecycle Updates functions
@@ -195,14 +201,13 @@ async function log(...msg) {
   }
 }
 
-async function setStatus(status, msg, file) {
+async function setStatus(status, msg) {
   console.log('Set job status to', status, msg);
   if (isProd) {
     await axios.post(`${CA_ENDPOINT}/status`, {
       jobId: process.env.CA_JOB_ID,
       status,
-      msg,
-      file
+      msg
     });
   }
 }
@@ -211,8 +216,8 @@ async function reportStarted() {
   await setStatus('STARTED');
 }
 
-async function reportCompleted(data, file) {
-  await setStatus('COMPLETED', data, file);
+async function reportCompleted(data) {
+  await setStatus('COMPLETED', data);
 }
 
 async function reportFailed(msg) {
@@ -237,6 +242,8 @@ export default {
   uploadFile,
   uploadFileToKey,
 
+  sendReportFile,
+  
   charge,
   log,
   reportStarted,

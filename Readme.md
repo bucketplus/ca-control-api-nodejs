@@ -140,6 +140,10 @@ The following methods are currently available via the control API:
 
 * `ca.uploadOutputFiles(localFolderPath, bucketUrl)` - uploads all the files from a specified local folder to the cloud output folder. *Coming Soon*
 
+### Handling File output
+
+* `ca.sendReportFile(fileStream)` - If client requested filestream via webhook or to directly process it, developer can use this function to send filestream and EfficientActions system will handle the rest.
+
 
 ### Lifecycle Updates
 
@@ -147,7 +151,7 @@ The following methods are currently available via the control API:
 Each container must invoke `ca.reportStarted()` as soon as possible. This is used for timing and to confirm that the container has started.
 
 #### On Completion
-Each container must invoke `ca.reportCompleted(data, file)` as soon as the container has finished running. This is used for timing, and to confirm that the job completed successfully. Containers that fail to call this method will be re-attempted. Developers can optionally pass a `data` object and `file` stream. `data` will be saved to the job history. `data` object and `file` stream are sent to the client via requested notification channels.
+Each container must invoke `ca.reportCompleted(data)` as soon as the container has finished running. This is used for timing, and to confirm that the job completed successfully. Containers that fail to call this method will be re-attempted. Developers can optionally pass a `data` object that will be saved to the job history and sent to the client via requested notification channels.
 
 In addition, on completion each container must call `ca.charge(quantity, unit_name)` to charge the end customer. The `unit` specified MUST match the `unit_name` specified in the manifest. This function should only be invoked once, and only once the job has successfully completed.
 
