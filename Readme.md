@@ -127,7 +127,7 @@ The following methods are currently available via the control API:
 
 * `ca.getWriteSignedUrlForFolder(folderPathParam, filename)` - return signed url for a file to write in specified cloud path.
 
-* `ca.uploadFileToFolder(localFilePath, contentType, folderPathParam, filename)` - uploads a specified local file to the specified file name in the cloud folder path.
+* `ca.uploadFileToFolder(localFilePath, folderPathParam, filename)` - uploads a specified local file to the specified file name in the cloud folder path.
 
 * `ca.writeFileToFolder(content, folderPathParam, filename)` -writes content to the specified file name in the cloud folder path. Recommended for small files, e.g. text and image files.
 
