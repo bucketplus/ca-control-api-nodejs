@@ -97,12 +97,6 @@ The API expects the following .env variables to be set:
 ##  Methods
 The following methods are currently available via the control API:
 
-### Signed Urls
-
-#### Presigned URLs are generated for temporary download/upload access objects using a single url.
-
-
-
 ### Reading Params
 
 #### For param.type = `file` containers
@@ -145,7 +139,7 @@ The following methods are currently available via the control API:
 Each container must invoke `ca.reportStarted()` as soon as possible. This is used for timing and to confirm that the container has started.
 
 #### On Completion
-Each container must invoke `ca.reportCompleted(data)` as soon as the container has finished running. This is used for timing, and to confirm that the job completed successfully. Containers that fail to call this method will be re-attempted. Developers can optionally pass a `data` object that will be saved to the job history and sent to the client via requested notification channels.
+Each container must invoke `ca.reportCompleted(data)` as soon as the container has finished running. This is used for timing, and to confirm that the job completed successfully. Containers that fail to call this method will be re-attempted. Developers can optionally pass a `data` object in JSON format. For more information, see "Understanding JSON return values".
 
 In addition, on completion each container must call `ca.charge(quantity, unit_name)` to charge the end customer. The `unit` specified MUST match the `unit_name` specified in the manifest. This function should only be invoked once, and only once the job has successfully completed.
 
@@ -198,10 +192,11 @@ for `type`=`folder` and `paramType` = `output`
 * param `name` = `JP_OUTPUT_FOLDER`
 * param `label` = `Output Folder Path`
 
+### Understanding Signed Urls
+Presigned URLs are generated for temporary download/upload access objects using a single url.
+
 ### Understanding JSON return values
 When running actions, the user can choose whether to save the returned JSON (as a separate file), to receive it via webhook, or to process immediately via await - this is handled by the EfficientActions system, i.e. the individual statndard container service needs to return some JSON (can be null), and the EfficientActions system will handle the rest. 
-Here are some example scenarios:
-https://github.com/efficientactions/ca-action-import-file-from-url
 
 #### Anonymize Image (Object/File Action that produces an anonymized file from the input file)
 For an object/file action that produces a file, in the manifest the user specifies:
@@ -225,6 +220,6 @@ Please note - like all actions, this action will also generate a JSON "return va
 
 
 ### Example Actions
-* https://github.com/bucketplus/bp-action-import-file-from-url
-* https://github.com/bucketplus/bp-action-image-ocr
-* https://github.com/bucketplus/bp-action-remove-bg-from-images
+* https://github.com/bucketplus/ca-action-import-file-from-url
+* https://github.com/bucketplus/ca-action-image-ocr
+* https://github.com/bucketplus/ca-action-remove-bg-from-images
