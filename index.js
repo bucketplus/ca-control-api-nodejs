@@ -67,8 +67,8 @@ async function getReadSignedUrl(bucketKey) {
 // -----------------------------
 // Reading Folder fuctions
 // -----------------------------
-async function listFolderObjects(bucketKey) {
-  const bucketCreds = getBucketParams(bucketKey);
+async function listFolderObjects(folderKey) {
+  const bucketCreds = getBucketParams(folderKey);
   const minioClient = getMinioClient(bucketCreds);
   var data = []
   var stream = await minioClient.listObjects(bucketCreds.bucket,'folder/', true)
@@ -150,8 +150,7 @@ async function uploadFileToFolder(folderKey, localPath, key) {
 }
 
 async function writeFileToFolder(folderKey, content, key) {
-  const bucketUrl = process.env[folderKey]
-  const signedUrl = await getWriteSignedUrl(`${bucketUrl/key}`);
+  const signedUrl = await getWriteSignedUrlForFolder(folderKey, key);
   return await axios({
     method: 'PUT',
     url: signedUrl,
@@ -201,6 +200,14 @@ async function reportStarted() {
 }
 
 async function reportCompleted(data) {
+  if(process.env.jsonFilePath) {
+    const signedUrl = await getWriteSignedUrl('jsonFilePath');
+    await axios({
+      method: 'PUT',
+      url: signedUrl,
+      data: data
+    });
+  }
   await setStatus('COMPLETED', data);
 }
 
@@ -218,7 +225,7 @@ export default {
   writeFile,
   uploadFile,
   getWriteSignedUrl,
-  
+
   getWriteSignedUrlForFolder,
   uploadFileToFolder,
   writeFileToFolder,

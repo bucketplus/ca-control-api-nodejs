@@ -114,9 +114,9 @@ The following methods are currently available via the control API:
 * `ca.downloadFile(bucketKey, localPath)` - downloads the cloud input file to a local relative path. Recommended for larger files, e.g. video files.
 
 #### For param.type = `folder` containers
-* `ca.downloadFiles(bucketKey, localFolderPath)` - downloads all cloud input files to a local folder. *Coming Soon*
+* `ca.downloadFiles(folderKey, localFolderPath)` - downloads all cloud input files to a local folder. *Coming Soon*
 
-* `ca.listFolderObjects(bucketKey)` - provides an array of all cloud input files in a folder.
+* `ca.listFolderObjects(folderKey)` - provides an array of all cloud input files in a folder.
 
 
 ### Writing Params
