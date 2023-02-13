@@ -1,6 +1,7 @@
 import './config.js'
 import axios from 'axios';
 import * as Minio from 'minio';
+import mime from "mime-types";
 
 const CA_ENDPOINT = process.env.CA_ENDPOINT;
 const isProd = (process.env.CA_ENV == 'production');
@@ -14,7 +15,8 @@ function getMinioClient({accessKeyId, secretAccessKey, endpoint}) {
   });
 }
 
-function getBucketParams(bucketUrl) {
+function getBucketParams(bucketKey) {
+  const bucketUrl = process.env[bucketKey]
   // Assuming bucket url in this format 
   // https://accesskey:secretkey@endpoint/bucket/key
   const bucketCreds = bucketUrl.split('//')[1].split('@')
@@ -28,45 +30,11 @@ function getBucketParams(bucketUrl) {
 }
 
 // -----------------------------
-// Signed Url fuctions
-// -----------------------------
-
-async function getSignedInputFileUrl(bucketUrl) {
-  const bucketCreds = getBucketParams(bucketUrl);
-  const minioClient = getMinioClient(bucketCreds);
-  return minioClient.presignedGetObject(
-    bucketCreds.bucket,
-    bucketCreds.key,
-    24*60*60
-  )
-}
-
-async function getSignedOutputFileUrl(bucketUrl) {
-  const bucketCreds = getBucketParams(bucketUrl);
-  const minioClient = getMinioClient(bucketCreds);
-  return minioClient.presignedPutObject(
-    bucketCreds.bucket,
-    bucketCreds.key,
-    24*60*60
-  );
-}
-
-async function getSignedOutputUrlForKey(bucketUrl, key) {
-  const bucketCreds = getBucketParams(bucketUrl);
-  const minioClient = getMinioClient(bucketCreds);
-  return minioClient.presignedPutObject(
-    bucketCreds.bucket,
-    bucketCreds.key ? `${bucketCreds.key}/${key}` : `${key}`,
-    24*60*60
-  );
-}
-
-// -----------------------------
 // Reading Input file Functions
 // -----------------------------
 
-async function readFileAsStream(bucketUrl) {
-  const bucketCreds = getBucketParams(bucketUrl);
+async function readFile(bucketKey) {
+  const bucketCreds = getBucketParams(bucketKey);
   const minioClient = getMinioClient(bucketCreds);
   return await minioClient.getObject(
     bucketCreds.bucket,
@@ -74,16 +42,9 @@ async function readFileAsStream(bucketUrl) {
   );
 }
 
-async function readFile(bucketUrl) {
-  const signedUrl = await getSignedInputFileUrl(bucketUrl);
-  return await axios({
-    method: 'GET',
-    url: signedUrl,
-  });  
-}
 
-async function downloadFile(bucketUrl, localPath) {
-  const bucketCreds = getBucketParams(bucketUrl);
+async function downloadFile(bucketKey, localPath) {
+  const bucketCreds = getBucketParams(bucketKey);
   const minioClient = getMinioClient(bucketCreds);  
   await minioClient.fGetObject(
     bucketCreds.bucket,
@@ -93,11 +54,21 @@ async function downloadFile(bucketUrl, localPath) {
 }
 
 
+async function getReadSignedUrl(bucketKey) {
+  const bucketCreds = getBucketParams(bucketKey);
+  const minioClient = getMinioClient(bucketCreds);
+  return minioClient.presignedGetObject(
+    bucketCreds.bucket,
+    bucketCreds.key,
+    24*60*60
+  )
+}
+
 // -----------------------------
 // Reading Folder fuctions
 // -----------------------------
-async function listInputFolderObjects(bucketUrl) {
-  const bucketCreds = getBucketParams(bucketUrl);
+async function listFolderObjects(bucketKey) {
+  const bucketCreds = getBucketParams(bucketKey);
   const minioClient = getMinioClient(bucketCreds);
   var data = []
   var stream = await minioClient.listObjects(bucketCreds.bucket,'folder/', true)
@@ -112,26 +83,8 @@ async function listInputFolderObjects(bucketUrl) {
 // Writing File Functions
 // -----------------------------
 
-async function writeFile(bucketUrl, content) {
-  const signedUrl = await getSignedOutputFileUrl(bucketUrl);  
-  return await axios({
-    method: 'PUT',
-    url: signedUrl,
-    data: content
-  });
-}
-
-async function writeFileToKey(bucketUrl, content, key) {
-  const signedUrl = await getSignedOutputFileUrl(`${bucketUrl/key}`);
-  return await axios({
-    method: 'PUT',
-    url: signedUrl,
-    data: content
-  });
-}
-
-async function writeStreamToFile(bucketUrl, fileStream) {
-  const bucketCreds = getBucketParams(bucketUrl);
+async function writeFile(bucketKey, fileStream) {
+  const bucketCreds = getBucketParams(bucketKey);
   const minioClient = getMinioClient(bucketCreds);  
   minioClient.putObject(
     bucketCreds.bucket,
@@ -140,9 +93,10 @@ async function writeStreamToFile(bucketUrl, fileStream) {
   );
 }
 
-async function uploadFile(bucketUrl, localPath, contentType) {
-  const bucketCreds = getBucketParams(bucketUrl);
+async function uploadFile(bucketKey, localPath) {
+  const bucketCreds = getBucketParams(bucketKey);
   const minioClient = getMinioClient(bucketCreds);
+  const contentType = mime.lookup(`${tempDirectory}/${dir}/${file}`);
   const metaData = {
     'Content-Type': contentType
   }
@@ -154,9 +108,36 @@ async function uploadFile(bucketUrl, localPath, contentType) {
   );
 }
 
-async function uploadFileToKey(bucketUrl, localPath, contentType, key) {
-  const bucketCreds = getBucketParams(bucketUrl);
+async function getWriteSignedUrl(bucketKey) {
+  const bucketCreds = getBucketParams(bucketKey);
   const minioClient = getMinioClient(bucketCreds);
+  return minioClient.presignedPutObject(
+    bucketCreds.bucket,
+    bucketCreds.key,
+    24*60*60
+  );
+}
+
+
+// -----------------------------
+// Writing to Folder fuctions
+// -----------------------------
+
+async function getWriteSignedUrlForFolder(folderKey, key) {
+  const bucketCreds = getBucketParams(folderKey);
+  const minioClient = getMinioClient(bucketCreds);
+  return minioClient.presignedPutObject(
+    bucketCreds.bucket,
+    bucketCreds.key ? `${bucketCreds.key}/${key}` : `${key}`,
+    24*60*60
+  );
+}
+
+
+async function uploadFileToFolder(folderKey, localPath, key) {
+  const bucketCreds = getBucketParams(folderKey);
+  const minioClient = getMinioClient(bucketCreds);
+  const contentType = mime.lookup(`${tempDirectory}/${dir}/${file}`);
   const metaData = {
     'Content-Type': contentType
   }
@@ -168,10 +149,13 @@ async function uploadFileToKey(bucketUrl, localPath, contentType, key) {
   );
 }
 
-async function sendFile(fileStream) {
-  await axios.post(`${CA_ENDPOINT}/file`, {
-    jobId: process.env.CA_JOB_ID,
-    file: fileStream
+async function writeFileToFolder(folderKey, content, key) {
+  const bucketUrl = process.env[folderKey]
+  const signedUrl = await getWriteSignedUrl(`${bucketUrl/key}`);
+  return await axios({
+    method: 'PUT',
+    url: signedUrl,
+    data: content
   });
 }
 
@@ -225,24 +209,19 @@ async function reportFailed(msg) {
 }
 
 export default {
-  getSignedInputFileUrl,
-  getSignedOutputFileUrl,
-  getSignedOutputUrlForKey,
-
-  readFileAsStream,
   readFile,
   downloadFile,
+  getReadSignedUrl,
 
-  listInputFolderObjects,
+  listFolderObjects,
 
   writeFile,
-  writeFileToKey,
-  writeStreamToFile,
-
   uploadFile,
-  uploadFileToKey,
-
-  sendFile,
+  getWriteSignedUrl,
+  
+  getWriteSignedUrlForFolder,
+  uploadFileToFolder,
+  writeFileToFolder,
   
   charge,
   log,

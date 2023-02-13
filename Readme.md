@@ -101,49 +101,43 @@ The following methods are currently available via the control API:
 
 #### Presigned URLs are generated for temporary download/upload access objects using a single url.
 
-* `ca.getSignedInputFileUrl(bucketUrl)` - return signed url for a file to read.
-
-* `ca.getSignedOutputFileUrl(bucketUrl)` - return signed url for a file to write.
-
-* `ca.getSignedOutputUrlForKey(bucketUrl, key)` - return signed url for a file to write for specified key path.
-
-### Reading Inputs
-
-#### For input.type = `file` containers
-* `ca.readFileAsStream(bucketUrl)` - reads the cloud input file as a stream. Recommended for small files, e.g. text and image files.
-
-* `ca.readFile(bucketUrl)` - reads the cloud input file as aa object. Recommended for small files, e.g. text and image files.
-
-* `ca.downloadFile(bucketUrl, localPath)` - downloads the cloud input file to a local relative path. Recommended for larger files, e.g. video files.
-
-#### For input.type = `folder` containers
-* `ca.downloadInputFiles(localFolderPath, bucketUrl)` - downloads all cloud input files to a local folder. *Coming Soon*
-
-* `ca.listInputFolderObjects(bucketUrl)` - provides an array of all cloud input files in a folder.
 
 
-### Writing Outputs
+### Reading Params
 
-#### For output.type = `file` containers
+#### For param.type = `file` containers
 
-* `ca.writeStreamToFile(bucketUrl, fileStream)` - writes content to the cloud output file from stream/Buffer. The maximum size of a single object is limited to 5TB.
+* `ca.getReadSignedUrl(bucketKey)` - return signed url for a file to read.
 
-* `ca.writeFile(bucketUrl, content)` - writes content to the cloud output file. Recommended for small files, e.g. text and image files.
+* `ca.readFile(bucketKey)` - reads the cloud input file as a stream. Recommended for small files, e.g. text and image files.
 
-* `ca.writeFileToKey(bucketUrl, content, key)` -writes content to the cloud output file for specified key path. Recommended for small files, e.g. text and image files.
+* `ca.downloadFile(bucketKey, localPath)` - downloads the cloud input file to a local relative path. Recommended for larger files, e.g. video files.
 
-* `ca.uploadFile(bucketUrl, localPath, contentType)` - uploads a specified local file to the cloud output file.
+#### For param.type = `folder` containers
+* `ca.downloadFiles(bucketKey, localFolderPath)` - downloads all cloud input files to a local folder. *Coming Soon*
 
-* `ca.uploadFileToKey(bucketUrl, localPath, contentType, key)` - uploads a specified local file to the cloud output file for specified key path.
+* `ca.listFolderObjects(bucketKey)` - provides an array of all cloud input files in a folder.
 
-#### For output.type = `folder` containers
 
-* `ca.uploadOutputFiles(localFolderPath, bucketUrl)` - uploads all the files from a specified local folder to the cloud output folder. *Coming Soon*
+### Writing Params
 
-### Handling File output
+#### For param.type = `file` containers
 
-* `ca.sendFile(fileStream)` - If client requested filestream via webhook or to directly process it, developer can use this function to send filestream and EfficientActions system will handle the rest.
+* `ca.writeFile(bucketKey, fileStream)` - writes content to the cloud output file from stream/Buffer. The maximum size of a single object is limited to 5TB.
 
+* `ca.uploadFile(bucketKey, localPath)` - uploads a specified local file to the cloud output file.
+
+* `ca.getWriteSignedUrl(bucketKey)` - return signed url for a file to write.
+
+#### For param.type = `folder` containers
+
+* `ca.getWriteSignedUrlForFolder(folderKey, key)` - return signed url for a file to write for specified key path.
+
+* `ca.uploadFileToFolder(folderKey, localPath, contentType, key)` - uploads a specified local file to the cloud output file for specified key path.
+
+* `ca.writeFileToFolder(folderKey, content, key)` -writes content to the cloud output file for specified key path. Recommended for small files, e.g. text and image files.
+
+* `ca.uploadOutputFiles(folderKey, localFolderPath)` - uploads all the files from a specified local folder to the cloud output folder. *Coming Soon*
 
 ### Lifecycle Updates
 
