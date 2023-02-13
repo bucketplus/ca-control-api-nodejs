@@ -203,11 +203,6 @@ When running actions, the user can choose whether to save the returned JSON (as 
 Here are some example scenarios:
 https://github.com/efficientactions/ca-action-import-file-from-url
 
-### Understanding return files
-When running actions, the user can choose whether to save the returned file in cloud url or recieve it as a file stream via webhook, or to process file stream immediately via await - this is handled by the EfficientActions system, i.e. If the individual statndard container service returns file and it does not find a file path in user input it will send file as stream the EfficientActions system will handle the rest. 
-Here are some example scenarios:
-https://github.com/efficientactions/ca-action-import-file-from-url
-
 #### Anonymize Image (Object/File Action that produces an anonymized file from the input file)
 For an object/file action that produces a file, in the manifest the user specifies:
 * the input file as a parameter (marked as type=file, paramType=input)
