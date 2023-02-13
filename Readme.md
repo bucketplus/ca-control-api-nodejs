@@ -97,41 +97,41 @@ The API expects the following .env variables to be set:
 ##  Methods
 The following methods are currently available via the control API:
 
-### Reading Params
+### Read Methods
 
 #### For param.type = `file` containers
 
-* `ca.getReadSignedUrl(bucketKey)` - return signed url for a file to read.
+* `ca.getReadSignedUrlforFile(filePathParam)` - return signed url for a file to read. Eg., getReadSignedUrlforFile('JP_INPUT_FILE')
 
-* `ca.readFile(bucketKey)` - reads the cloud input file as a stream. Recommended for small files, e.g. text and image files.
+* `ca.readFile(filePathParam)` - reads the cloud input file as a stream. Recommended for small files, e.g. text and image files.
 
-* `ca.downloadFile(bucketKey, localPath)` - downloads the cloud input file to a local relative path. Recommended for larger files, e.g. video files.
+* `ca.downloadFile(filePathParam, localFilePath)` - downloads the cloud input file to a local relative path. Recommended for larger files, e.g. video files.
 
 #### For param.type = `folder` containers
-* `ca.downloadFiles(folderKey, localFolderPath)` - downloads all cloud input files to a local folder. *Coming Soon*
+* `ca.downloadFiles(folderPathParam, localFolderPath)` - downloads all cloud input files to a local folder. *Coming Soon*
 
-* `ca.listFolderObjects(folderKey)` - provides an array of all cloud input files in a folder.
+* `ca.listFolderObjects(folderPathParam)` - provides an array of all cloud input files in a folder. Eg., listFolderObjects('JP_OUTPUT_FOLDER')
 
 
-### Writing Params
+### Write Methods
 
 #### For param.type = `file` containers
 
-* `ca.writeFile(bucketKey, fileStream)` - writes content to the cloud output file from stream/Buffer. The maximum size of a single object is limited to 5TB.
+* `ca.getWriteSignedUrlforFile(filePathParam)` - return signed url for a file to write.
 
-* `ca.uploadFile(bucketKey, localPath)` - uploads a specified local file to the cloud output file.
+* `ca.writeFile(fileStream, filePathParam)` - writes content to the cloud output file from stream/Buffer. The maximum size of a single object is limited to 5TB.
 
-* `ca.getWriteSignedUrl(bucketKey)` - return signed url for a file to write.
+* `ca.uploadFile(localFilePath, filePathParam)` - uploads a specified local file to the cloud output file.
 
 #### For param.type = `folder` containers
 
-* `ca.getWriteSignedUrlForFolder(folderKey, key)` - return signed url for a file to write for specified key path.
+* `ca.getWriteSignedUrlForFolder(folderPathParam, filename)` - return signed url for a file to write in specified cloud path.
 
-* `ca.uploadFileToFolder(folderKey, localPath, contentType, key)` - uploads a specified local file to the cloud output file for specified key path.
+* `ca.uploadFileToFolder(localFilePath, contentType, folderPathParam, filename)` - uploads a specified local file to the specified file name in the cloud folder path.
 
-* `ca.writeFileToFolder(folderKey, content, key)` -writes content to the cloud output file for specified key path. Recommended for small files, e.g. text and image files.
+* `ca.writeFileToFolder(content, folderPathParam, filename)` -writes content to the specified file name in the cloud folder path. Recommended for small files, e.g. text and image files.
 
-* `ca.uploadOutputFiles(folderKey, localFolderPath)` - uploads all the files from a specified local folder to the cloud output folder. *Coming Soon*
+* `ca.uploadFiles(localFolderPath, folderPathParam)` - uploads all the files from a specified local folder to the cloud folder path. *Coming Soon*
 
 ### Lifecycle Updates
 
@@ -166,13 +166,13 @@ paramType is decided based on the need of the parameter. `paramType` is
   * `accesskey` and `secretkey` is the access key id and secret access key to access the bucket.
   * `endpoint` is the bucekt endpoint which is provider specific , eg. for a bucket in aws it would be bucket-name.s3.region-code.amazonaws.com'.
   * `path` is the path the bucket where the file is present or needs to be uploaded. It must include the filename with extension. Eg. mydirectory/filename.txt
-  The suggested `name` for this parameter type is `JP_INPUT_FILE`, and suggested `label` is `Input file Path`. 
+
 * `folder`: if the parameter needs a folder value. This can be a `bucketurl` *(url, localfile - Coming Soon)* . `bucketurl` is of the format `https://accesskey:secretkey@endpoint/path`, where 
 
   * `accesskey` and `secretkey` are the access key id and secret access key to access the bucket.
   * `endpoint` is provider specific , eg. for aws it would be bucket-name.s3.region-code.amazonaws.com'.
   * `path` is the path of the folder in the bucket where the folder is present or needs to be created. It must include the foldername. Eg. mydirectory/foldername
- The suggested `name` for this parameter type is `JP_INPUT_FOLDER`, and suggested `label` is `Input file Path`. 
+
 * `url` : if the parameter needs a url value. This is a string of a valid url format. 
 
 ### Naming suggestions for manifest `params`
