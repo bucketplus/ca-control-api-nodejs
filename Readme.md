@@ -220,6 +220,6 @@ Please note - like all actions, this action will also generate a JSON "return va
 
 
 ### Example Actions
-* https://github.com/bucketplus/ca-action-import-file-from-url
-* https://github.com/bucketplus/ca-action-image-ocr
-* https://github.com/bucketplus/ca-action-remove-bg-from-images
+* https://github.com/efficientactions/ca-action-import-file-from-url
+* https://github.com/efficientactions/ca-action-image-ocr
+* https://github.com/efficientactions/ca-action-remove-bg-from-images
