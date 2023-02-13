@@ -101,7 +101,7 @@ The following methods are currently available via the control API:
 
 #### For param.type = `file` containers
 
-* `ca.getReadSignedUrlforFile(filePathParam)` - return signed url for a file to read. Eg., getReadSignedUrlforFile('JP_INPUT_FILE')
+* `ca.getReadSignedUrlforFile(filePathParam)` - return signed url for a file to read. Eg., `getReadSignedUrlforFile('JP_INPUT_FILE')`
 
 * `ca.readFile(filePathParam)` - reads the cloud input file as a stream. Recommended for small files, e.g. text and image files.
 
@@ -110,7 +110,7 @@ The following methods are currently available via the control API:
 #### For param.type = `folder` containers
 * `ca.downloadFiles(folderPathParam, localFolderPath)` - downloads all cloud input files to a local folder. *Coming Soon*
 
-* `ca.listFolderObjects(folderPathParam)` - provides an array of all cloud input files in a folder. Eg., listFolderObjects('JP_OUTPUT_FOLDER')
+* `ca.listFolderObjects(folderPathParam)` - provides an array of all cloud input files in a folder. Eg., `listFolderObjects('JP_OUTPUT_FOLDER')`
 
 
 ### Write Methods
