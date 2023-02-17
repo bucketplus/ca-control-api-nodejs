@@ -43,11 +43,11 @@ Each Standard Container Service must include a `manifest.json` file that include
   
   * `unit_price` - the default chargeable price per unit
   
-* `params` - an array of custom job parameters that should be passed by the end user when invoking the service container. Each should include:
+* `params` - an object of job parameter objects that should be passed by the end user when invoking the service container. Each should include:
 
-  * `name` - the name of the environment variable when passed to the service, e.g. `JP_INPUT_FILE`. All parameter names should start with `JP_` (for job parameter), and should be in ALL_CAPS.
+  * (`name`) - the name of the environment variable when passed to the service, e.g. `JP_INPUT_FILE`. All parameter names should start with `JP_` (for job parameter), and should be in ALL_CAPS.
   
-  * `label` - a human-readable to help users understand the parameter
+  * `label` - a human-readable name of the variable to help users understand the parameter. Eg. "Input File Path"
   
   * `description` - a human-readable description to help users understand the parameter 
   
