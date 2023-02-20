@@ -27,15 +27,17 @@ Each Standard Container Service must include a `manifest.json` file that include
 
 * `icon` - path to a local 512x512 jpg or png file that represents the service.
 
-* `developer` - the email address of the developer (should match their login)
+* `developer` - the email address of the developer (should match developer login registered with us)
 
 * `tags` - an array of text tags that describe the action (these should be defined somewhere so people re-use the same labels)
 
-* `attribution` - info about external services used, if any
+* `attributions` - an array of external services used, if any. Each should include:
 
   * `name` - the name of the external service that powers the action
   
   * `url` - the URL of the external service that powers the action
+  
+  * `icon` - the icon of the external service that powers the action
   
 * `billing` - info about the cost of this service. Collected fees are shared between Bucket+ and the developer.
 
