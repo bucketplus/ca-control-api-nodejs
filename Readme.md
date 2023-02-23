@@ -47,7 +47,7 @@ Each Standard Container Service must include a `manifest.json` file that include
   
 * `params` - an object of job parameter objects that should be passed by the end user when invoking the service container. Each should include:
 
-  * (`name`) - the name of the environment variable when passed to the service, e.g. `JP_INPUT_FILE`. All parameter names should start with `JP_` (for job parameter), and should be in ALL_CAPS.
+  * `(name)` - the name of the environment variable when passed to the service, e.g. `JP_INPUT_FILE`. All parameter names should start with `JP_` (for job parameter), and should be in ALL_CAPS.
   
   * `label` - a human-readable name of the variable to help users understand the parameter. Eg. "Input File Path"
   
@@ -69,8 +69,8 @@ Each Standard Container Service must include a `manifest.json` file that include
   
   * `vCPU` - the default number of vCPUs to allocate to the container
   
-  * `spot` - whether the container can run in a spot instance (strongly recommended for services which can safely re-run if terminated early). *Coming Soon*
-
+* `secrets` - an array of secret names that is needed to run the action. Eg.`SS_GOOGLE_TRANSLATE_API_KEY`. The values of the secrets should be added using our API.
+  
 # The Control API
 The Efficient Actions Control API contains convenience methods making it easier for service developers to. This repo contains code for Node.js based containers.
 
@@ -94,7 +94,7 @@ The API expects the following .env variables to be set:
 * Each Job Parameter defined in the manifest will be validated and sent using the appropriate name, e.g. `JP_INPUT_FILE`.
 
 ### Service Secret Environment Variables
-* Each Service Secret defined in the manifest will be validated and sent using the appropriate name, e.g. `SS_GOOGLE_TRANSLATE_API_KEY`.
+* Each Service Secret defined in the manifest will be validated and sent using the appropriate name, e.g. `SS_GOOGLE_TRANSLATE_API_KEY`. 
 
 ##  Methods
 The following methods are currently available via the control API:
