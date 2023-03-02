@@ -199,7 +199,7 @@ async function reportStarted() {
 
 async function reportCompleted(data) {
   if(process.env.jsonFilePath && data) {
-    const signedUrl = await getWriteSignedUrl('jsonFilePath');
+    const signedUrl = await getWriteSignedUrlforFile('jsonFilePath');
     await axios({
       method: 'PUT',
       url: signedUrl,
