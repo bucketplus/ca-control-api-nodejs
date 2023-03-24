@@ -17,7 +17,7 @@ function getMinioClient({accessKeyId, secretAccessKey, endpoint}) {
 
 function getBucketParams(bucketKey) {
   const bucketUrl = process.env[bucketKey]
-  // Assuming bucket url in this format 
+  // Assuming bucket url in this format
   // https://accesskey:secretkey@endpoint/bucket/key
   const bucketCreds = bucketUrl.split('//')[1].split('@')
   return {
@@ -45,7 +45,7 @@ async function readFile(filePathParam) {
 
 async function downloadFile(filePathParam, localFilePath) {
   const bucketCreds = getBucketParams(filePathParam);
-  const minioClient = getMinioClient(bucketCreds);  
+  const minioClient = getMinioClient(bucketCreds);
   await minioClient.fGetObject(
     bucketCreds.bucket,
     bucketCreds.key,
@@ -73,7 +73,7 @@ async function listFolderObjects(folderPathParam) {
   var data = []
   var stream = await minioClient.listObjects(bucketCreds.bucket,'folder/', true)
   stream.on('data', function(obj) { data.push(obj) } )
-  await new Promise(resolve => stream.on("end", function (obj) { 
+  await new Promise(resolve => stream.on("end", function (obj) {
     resolve(data);
   }))
   return data;
@@ -85,7 +85,7 @@ async function listFolderObjects(folderPathParam) {
 
 async function writeFile(fileStream, filePathParam) {
   const bucketCreds = getBucketParams(filePathParam);
-  const minioClient = getMinioClient(bucketCreds);  
+  const minioClient = getMinioClient(bucketCreds);
   minioClient.putObject(
     bucketCreds.bucket,
     bucketCreds.key,
@@ -96,7 +96,7 @@ async function writeFile(fileStream, filePathParam) {
 async function uploadFile(localFilePath, filePathParam) {
   const bucketCreds = getBucketParams(filePathParam);
   const minioClient = getMinioClient(bucketCreds);
-  const contentType = mime.lookup(localFilePath);
+  const contentType = mime.lookup(`${tempDirectory}/${dir}/${file}`);
   const metaData = {
     'Content-Type': contentType
   }
@@ -136,7 +136,7 @@ async function getWriteSignedUrlForFolder(folderPathParam, filename) {
 async function uploadFileToFolder(localFilePath, folderPathParam, filename) {
   const bucketCreds = getBucketParams(folderPathParam);
   const minioClient = getMinioClient(bucketCreds);
-  const contentType = mime.lookup(localFilePath);
+  const contentType = mime.lookup(`${tempDirectory}/${dir}/${file}`);
   const metaData = {
     'Content-Type': contentType
   }
@@ -198,8 +198,8 @@ async function reportStarted() {
 }
 
 async function reportCompleted(data) {
-  if(process.env.jsonFilePath && data) {
-    const signedUrl = await getWriteSignedUrlforFile('jsonFilePath');
+  if(process.env.CA_RESPONSE_FILE && data) {
+    const signedUrl = await getWriteSignedUrlforFile('CA_RESPONSE_FILE');
     await axios({
       method: 'PUT',
       url: signedUrl,
@@ -227,7 +227,7 @@ export default {
   getWriteSignedUrlForFolder,
   uploadFileToFolder,
   writeFileToFolder,
-  
+
   charge,
   log,
   reportStarted,
