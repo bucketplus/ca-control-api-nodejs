@@ -96,7 +96,7 @@ async function writeFile(fileStream, filePathParam) {
 async function uploadFile(localFilePath, filePathParam) {
   const bucketCreds = getBucketParams(filePathParam);
   const minioClient = getMinioClient(bucketCreds);
-  const contentType = mime.lookup(`${tempDirectory}/${dir}/${file}`);
+  const contentType = mime.lookup(localFilePath);
   const metaData = {
     'Content-Type': contentType
   }
@@ -136,7 +136,7 @@ async function getWriteSignedUrlForFolder(folderPathParam, filename) {
 async function uploadFileToFolder(localFilePath, folderPathParam, filename) {
   const bucketCreds = getBucketParams(folderPathParam);
   const minioClient = getMinioClient(bucketCreds);
-  const contentType = mime.lookup(`${tempDirectory}/${dir}/${file}`);
+  const contentType = mime.lookup(localFilePath);
   const metaData = {
     'Content-Type': contentType
   }
