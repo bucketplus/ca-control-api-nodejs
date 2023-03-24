@@ -1,6 +1,6 @@
 {
-  "name": "@bucketplus/bp-control-api-nodejs",
-  "version": "0.0.1",
+  "name": "@efficientactions/ca-control-api-nodejs",
+  "version": "0.0.3",
   "main": "index.js",
   "type": "module",
   "license": "MIT",
