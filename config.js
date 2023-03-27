@@ -3,7 +3,7 @@ import path  from 'path';
 import {fileURLToPath} from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const manifestfile = fs.readFileSync(path.join(__dirname, '../../../manifest.json'))
+const manifestfile = fs.readFileSync(path.join(__dirname, '../../../manifest.json'));
 const manifestObject = JSON.parse(manifestfile.toString());
 
 const expectedParamType = {
@@ -57,7 +57,7 @@ const expectedManifest = {
   },
   tags: {
     required: false,
-    expectedFormat: ''
+    expectedFormat: ['']
   },
   attribution: {
     required: false,
@@ -108,12 +108,24 @@ function checkObject(expectedObject, parsedValue, key) {
   if(expectedObject.required && !parsedValue)
     throw new Error(`${key} not found in manifest file`);
   if(parsedValue){
-    if(typeof(expectedObject.expectedFormat) === 'object')
-      for(let subkey in expectedObject.expectedFormat)
-        checkObject(expectedObject.expectedFormat[subkey], parsedValue[subkey], subkey);
+    if(typeof(expectedObject.expectedFormat) === 'object'){
+      if(!expectedObject.expectedFormat.length)
+        for(let subkey in expectedObject.expectedFormat)
+          checkObject(expectedObject.expectedFormat[subkey], parsedValue[subkey], subkey);
+      else {
+        if(typeof(parsedValue) !== 'object' || !parsedValue.length)
+          throw new Error(`${key} in manifest should be a valid array`)
+        else {
+          for (const parsedKey of parsedValue) {
+            if(typeof(parsedKey) !== typeof(expectedObject.expectedFormat[0]))
+              throw new Error(`${key} in manifest should be a valid array`);
+          }
+        }
+      }
+    }
     else {
       if(typeof(parsedValue) !== typeof(expectedObject.expectedFormat))
-        throw new Error(`${key} in manifest file should be of ${typeof(expectedObject.expectedFormat)} type`) 
+        throw new Error(`${key} in manifest file should be of ${typeof(expectedObject.expectedFormat)} type`)
       if(expectedObject.options) {
         let matched = false;
         expectedObject.options.forEach(option => {
@@ -126,15 +138,15 @@ function checkObject(expectedObject, parsedValue, key) {
 }
 
 for(let key in expectedManifest) {
-  if(key === 'params') {    
+  if(key === 'params') {
     if(!manifestObject.params || !Object.keys(manifestObject.params).length)
       throw new Error('No param found')
     for(const paramKey in manifestObject.params) {
-      const param = manifestObject.params[paramKey]      
+      const param = manifestObject.params[paramKey]
       for(let expectedParamkey in expectedParamType){
         checkObject(expectedParamType[expectedParamkey], param[expectedParamkey], expectedParamkey);
       }
     }
-  } else 
-    checkObject(expectedManifest[key], manifestObject[key], key);  
+  } else
+    checkObject(expectedManifest[key], manifestObject[key], key);
 }
