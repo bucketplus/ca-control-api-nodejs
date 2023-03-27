@@ -33,6 +33,29 @@ function getBucketParams(bucketKey) {
 // Reading Input file Functions
 // -----------------------------
 
+async function readFileData(filePathParam) {
+  const bucketCreds = getBucketParams(filePathParam);
+  const minioClient = getMinioClient(bucketCreds);
+  return new Promise((resolve, reject) => {
+    return minioClient.getObject(
+      bucketCreds.bucket,
+      bucketCreds.key,
+      function(err, readStream) {
+        let data = ''
+        readStream.on('data', function(obj) {
+          data = data + obj
+        } )
+        readStream.on('end',function() {
+          resolve(data);
+        });
+
+        readStream.on('error', function(err) {
+          reject(err);
+        });
+    });
+  });
+}
+
 async function readFile(filePathParam) {
   const bucketCreds = getBucketParams(filePathParam);
   const minioClient = getMinioClient(bucketCreds);
@@ -215,6 +238,7 @@ async function reportFailed(msg) {
 
 export default {
   readFile,
+  readFileData,
   downloadFile,
   getReadSignedUrlforFile,
 

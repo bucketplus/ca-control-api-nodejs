@@ -34,41 +34,41 @@ Each Standard Container Service must include a `manifest.json` file that include
 * `attributions` - an array of external services used, if any. Each should include:
 
   * `name` - the name of the external service that powers the action
-  
+
   * `url` - the URL of the external service that powers the action
-  
+
   * `icon` - the icon of the external service that powers the action
-  
+
 * `billing` - info about the cost of this service. Collected fees are shared between Bucket+ and the developer.
 
   * `unit_name` - the plural name of the chargeable unit, e.g. `pixels`, `characters`, `bytes`, or `seconds`
-  
+
   * `unit_price` - the default chargeable price per unit
-  
+
 * `params` - an object of job parameter objects that should be passed by the end user when invoking the service container. Each should include:
 
   * `(name)` - the name of the environment variable when passed to the service, e.g. `JP_INPUT_FILE`. All parameter names should start with `JP_` (for job parameter), and should be in ALL_CAPS.
-  
+
   * `label` - a human-readable name of the variable to help users understand the parameter. Eg. "Input File Path"
-  
-  * `description` - a human-readable description to help users understand the parameter 
-  
+
+  * `description` - a human-readable description to help users understand the parameter
+
   * `paramType` - either `input`, `output`, or `option`.
-  
+
   * `type` - the display type for the input, either `text`, `boolen`, `file` , `url`.   *Support for select, number, email, url or checkbox - Coming Soon*
 
   * `fileTypes` - array of mime types supported of file if params.type is file. This can be from predefined group of mime types or array of any mime types, Some predefined fileTypes are : `image`, `video`, `audio` `document`.
 
   * `required` - true if the parameter is required  
-  
+
 * `compute` - info about the compute properties of the container
 
   * `RAM` - the default RAM to allocate to the container, in Gigabytes
-  
+
   * `vCPU` - the default number of vCPUs to allocate to the container
-  
+
 * `secrets` - an array of secret names that is needed to run the action. Eg.`SS_GOOGLE_TRANSLATE_API_KEY`. The values of the secrets should be added using our API.
-  
+
 # The Control API
 The Efficient Actions Control API contains convenience methods making it easier for service developers to. This repo contains code for Node.js based containers.
 
@@ -76,7 +76,7 @@ The Efficient Actions Control API contains convenience methods making it easier 
 To install the Control API in a node.js container, run:
  `yarn add @efficientactions/ca-control-api-nodejs`.
 
-## Importing 
+## Importing
 To import the Control api, add:
 `import ca from '@efficientactions/ca-control-api-nodejs;` to your code
 
@@ -92,7 +92,7 @@ The API expects the following .env variables to be set:
 * Each Job Parameter defined in the manifest will be validated and sent using the appropriate name, e.g. `JP_INPUT_FILE`.
 
 ### Service Secret Environment Variables
-* Each Service Secret defined in the manifest will be validated and sent using the appropriate name, e.g. `SS_GOOGLE_TRANSLATE_API_KEY`. 
+* Each Service Secret defined in the manifest will be validated and sent using the appropriate name, e.g. `SS_GOOGLE_TRANSLATE_API_KEY`.
 
 ##  Methods
 The following methods are currently available via the control API:
@@ -103,7 +103,9 @@ The following methods are currently available via the control API:
 
 * `ca.getReadSignedUrlforFile(filePathParam)` - return signed url for a file to read. Eg., `getReadSignedUrlforFile('JP_INPUT_FILE')`
 
-* `ca.readFile(filePathParam)` - reads the cloud input file as a stream. Recommended for small files, e.g. text and image files.
+* `ca.readFile(filePathParam)` - reads the cloud input file as a stream.
+
+* `ca.readFileData(filePathParam)` - reads data from cloud input file. Recommended for small files, e.g. text and image files.
 
 * `ca.downloadFile(filePathParam, localFilePath)` - downloads the cloud input file to a local relative path. Recommended for larger files, e.g. video files.
 
@@ -154,41 +156,41 @@ To log data, use `ca.log(...msg)`. This will immediately be passed to `console.l
 ### Understanding manifest `params paramType`
 paramType is decided based on the need of the parameter. `paramType` is
 * `input` : if the parameter is needed as an `input` to the service
-* `ouput` : if the parameter is an `output` of the service 
+* `ouput` : if the parameter is an `output` of the service
 * `option`: if the parameter is neither an input nor an output type and is needed by the service to provide additional information for the job. Eg. a `JP_CONVERT_LANGUAGE` parameter in a text translation service which determines the language in which the service has to translate the text to.
 
 ### Understanding manifest `params type`
 `type` is decided by the display and format type for the parameter. `type` is
 * `text` : if the parameter needs a text value. This is a string.
-* `boolean` : if the parameter needs a boolean value. This can be `true` or `false`. 
-* `file`: if the parameter needs a file value. This can be a `bucketurl`. *(url,localfile - Coming Soon)* . `bucketurl` is of the format `https://accesskey:secretkey@endpoint/path`, where 
+* `boolean` : if the parameter needs a boolean value. This can be `true` or `false`.
+* `file`: if the parameter needs a file value. This can be a `bucketurl`. *(url,localfile - Coming Soon)* . `bucketurl` is of the format `https://accesskey:secretkey@endpoint/path`, where
 
   * `accesskey` and `secretkey` is the access key id and secret access key to access the bucket.
   * `endpoint` is the bucekt endpoint which is provider specific , eg. for a bucket in aws it would be bucket-name.s3.region-code.amazonaws.com'.
   * `path` is the path the bucket where the file is present or needs to be uploaded. It must include the filename with extension. Eg. mydirectory/filename.txt
 
-* `folder`: if the parameter needs a folder value. This can be a `bucketurl` *(url, localfile - Coming Soon)* . `bucketurl` is of the format `https://accesskey:secretkey@endpoint/path`, where 
+* `folder`: if the parameter needs a folder value. This can be a `bucketurl` *(url, localfile - Coming Soon)* . `bucketurl` is of the format `https://accesskey:secretkey@endpoint/path`, where
 
   * `accesskey` and `secretkey` are the access key id and secret access key to access the bucket.
   * `endpoint` is provider specific , eg. for aws it would be bucket-name.s3.region-code.amazonaws.com'.
   * `path` is the path of the folder in the bucket where the folder is present or needs to be created. It must include the foldername. Eg. mydirectory/foldername
 
-* `url` : if the parameter needs a url value. This is a string of a valid url format. 
+* `url` : if the parameter needs a url value. This is a string of a valid url format.
 
 ### Naming suggestions for manifest `params`
-for `type`=`file` and `paramType` = `input` 
+for `type`=`file` and `paramType` = `input`
 * param `name` = `JP_INPUT_FILE`
 * param `label` = `Input File Path`
 
-for `type`=`file` and `paramType` = `output` 
+for `type`=`file` and `paramType` = `output`
 * param `name` = `JP_OUTPUT_FILE`
 * param `label` = `Output File Path`
 
-for `type`=`folder` and `paramType` = `input` 
+for `type`=`folder` and `paramType` = `input`
 * param `name` = `JP_INPUT_FOLDER`
 * param `label` = `Input Folder Path`
 
-for `type`=`folder` and `paramType` = `output` 
+for `type`=`folder` and `paramType` = `output`
 * param `name` = `JP_OUTPUT_FOLDER`
 * param `label` = `Output Folder Path`
 
@@ -196,27 +198,27 @@ for `type`=`folder` and `paramType` = `output`
 Presigned URLs are generated for temporary download/upload access objects using a single url.
 
 ### Understanding JSON return values
-When running actions, the user can choose whether to save the returned JSON (as a separate file), to receive it via webhook, or to process immediately via await - this is handled by the EfficientActions system, i.e. the individual statndard container service needs to return some JSON (can be null), and the EfficientActions system will handle the rest. 
+When running actions, the user can choose whether to save the returned JSON (as a separate file), to receive it via webhook, or to process immediately via await - this is handled by the EfficientActions system, i.e. the individual statndard container service needs to return some JSON (can be null), and the EfficientActions system will handle the rest.
 
 #### Anonymize Image (Object/File Action that produces an anonymized file from the input file)
 For an object/file action that produces a file, in the manifest the user specifies:
 * the input file as a parameter (marked as type=file, paramType=input)
 * the output file as a parameter (marked as type=file, paramType=output)
 
-Please note - like all actions, this action will also generate a JSON "return value". In this case, it might be null, or it might contain metadata on the transformation, e.g. the number or position of faces. 
+Please note - like all actions, this action will also generate a JSON "return value". In this case, it might be null, or it might contain metadata on the transformation, e.g. the number or position of faces.
 
 #### Extract Text (Object/File Action that extracts the text from a file)
 For an object/file action that produces JSON only, in the manifest the user specifies:
 * the input file as a parameter (marked as type=file, paramType=input)
 
-Please note - like all actions, this action will also generate a JSON "return value". In this case it definitely will not be null - it will contain the extracted text. 
+Please note - like all actions, this action will also generate a JSON "return value". In this case it definitely will not be null - it will contain the extracted text.
 
 #### Import URL (Import Action that imports a file from a URL)
 For an import action that has no file input, in the manifest the user specifies:
 * the input URL as a parameter (marked as type=url, paramType=input)
 * the output file as a parameter (marked as type=file, paramType=output)
 
-Please note - like all actions, this action will also generate a JSON "return value". In this case, it might be null, or it might contain metadata on the import, e.g. the content type that was imported. 
+Please note - like all actions, this action will also generate a JSON "return value". In this case, it might be null, or it might contain metadata on the import, e.g. the content type that was imported.
 
 
 ### Example Actions

@@ -27,7 +27,7 @@ const expectedParamType = {
   },
   fileTypes: {
     required: false,
-    expectedFormat: ''
+    expectedFormat: ['']
   },
   defaultValue: {
     required: false
