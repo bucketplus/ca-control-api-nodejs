@@ -55,7 +55,7 @@ Each Standard Container Service must include a `manifest.json` file that include
 
   * `paramType` - either `input`, `output`, or `option`.
 
-  * `type` - the display type for the input, either `text`, `boolen`, `file` , `url`.   *Support for select, number, email, url or checkbox - Coming Soon*
+  * `type` - the display type for the input, either `text`, `boolen`, `file` , `url`.   *Support for select, email or checkbox - Coming Soon*
 
   * `fileTypes` - array of mime types supported of file if params.type is file. This can be from predefined group of mime types or array of any mime types, Some predefined fileTypes are : `image`, `video`, `audio` `document`.
 
@@ -122,6 +122,9 @@ The following methods are currently available via the control API:
 * `ca.getWriteSignedUrlforFile(filePathParam)` - return signed url for a file to write.
 
 * `ca.writeFile(fileStream, filePathParam)` - writes content to the cloud output file from stream/Buffer. The maximum size of a single object is limited to 5TB.
+
+* `ca.writeFileData(fileData, filePathParam)` - writes content to the cloud output file. Can be use for writing data in smaller files.
+
 
 * `ca.uploadFile(localFilePath, filePathParam)` - uploads a specified local file to the cloud output file.
 

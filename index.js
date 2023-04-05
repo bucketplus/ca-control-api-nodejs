@@ -116,6 +116,15 @@ async function writeFile(fileStream, filePathParam) {
   );
 }
 
+async function writeFileData(fileData, filePathParam) {
+  const signedUrl = await getWriteSignedUrlforFile(filePathParam);
+  await axios({
+    method: 'PUT',
+    url: signedUrl,
+    data: fileData
+  });
+}
+
 async function uploadFile(localFilePath, filePathParam) {
   const bucketCreds = getBucketParams(filePathParam);
   const minioClient = getMinioClient(bucketCreds);

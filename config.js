@@ -23,7 +23,7 @@ const expectedParamType = {
   type: {
     required: true,
     expectedFormat: '',
-    options: ['text', 'boolen', 'file', 'url', 'json']
+    options: ['text', 'boolen', 'file', 'url', 'json', 'folder', 'number']
   },
   fileTypes: {
     required: false,
