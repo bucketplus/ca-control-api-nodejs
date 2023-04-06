@@ -94,7 +94,7 @@ async function listFolderObjects(folderPathParam) {
   const bucketCreds = getBucketParams(folderPathParam);
   const minioClient = getMinioClient(bucketCreds);
   var data = []
-  var stream = await minioClient.listObjects(bucketCreds.bucket,'folder/', true)
+  var stream = await minioClient.listObjects(bucketCreds.bucket,bucketCreds.key, true)
   stream.on('data', function(obj) { data.push(obj) } )
   await new Promise(resolve => stream.on("end", function (obj) {
     resolve(data);
